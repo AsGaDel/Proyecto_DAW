@@ -212,12 +212,3 @@ docker compose down -v
 ```
 
 ---
-
-## Producción
-
-Para desplegar en producción:
-
-1. Cambia `DJANGO_SETTINGS_MODULE` a `config.settings.production` en `.env`
-2. Configura las variables de AWS S3 para el almacenamiento de archivos
-3. Establece `SECRET_KEY`, `ALLOWED_HOSTS` y credenciales reales
-4. Usa un servidor como **Gunicorn + Nginx** en lugar del servidor de desarrollo de Django
