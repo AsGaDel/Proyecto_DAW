@@ -1,10 +1,40 @@
 import { useState } from "react";
 
+// ─── Validadores por campo ───────────────────────────────────────────────────
+
+const validators = {
+  // Login
+  username: (value) => {
+    if (!value.trim()) return "El nombre de usuario no puede estar vacío.";
+    return null; // null = válido
+  },
+  password: (value) => {
+    if (!value.trim()) return "La contraseña no puede estar vacía.";
+    return null;
+  },
+
+  // Register
+  fullName: (value) => {
+    if (!value.trim()) return "El nombre y apellidos no pueden estar vacíos.";
+    return null;
+  },
+  email: (value) => {
+    if (!value.trim()) return "El correo no puede estar vacío.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Introduce un correo válido.";
+    return null;
+  },
+  confirmPassword: (value, form) => {
+    if (!value.trim()) return "Repite tu contraseña.";
+    if (value !== form.password) return "Las contraseñas no coinciden.";
+    return null;
+  },
+};
+
 // ─── Iconos ──────────────────────────────────────────────────────────────────
 
 function IconCheck() {
   return (
-    <svg className="inline w-4 h-4 text-green-500 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+    <svg className="w-4 h-4 text-green-500 inline ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
     </svg>
   );
@@ -12,7 +42,7 @@ function IconCheck() {
 
 function IconX() {
   return (
-    <svg className="inline w-4 h-4 text-red-500 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+    <svg className="w-4 h-4 text-red-500 inline ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
     </svg>
   );
@@ -20,49 +50,44 @@ function IconX() {
 
 // ─── Componente base reutilizable ────────────────────────────────────────────
 
-function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, footerLinkHref, onSubmit, serverErrors }) {
-  const initialState  = Object.fromEntries(fields.map((f) => [f.name, ""]));
-  const initialTouched = Object.fromEntries(fields.map((f) => [f.name, false]));
-  const initialErrors  = Object.fromEntries(fields.map((f) => [f.name, ""]));
+function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, footerLinkHref, onSubmit }) {
+  const initialState = Object.fromEntries(fields.map((f) => [f.name, ""]));
 
   const [form,    setForm]    = useState(initialState);
-  const [touched, setTouched] = useState(initialTouched);
-  const [errors,  setErrors]  = useState(initialErrors);
+  const [errors,  setErrors]  = useState({});   // { fieldName: "mensaje" | null }
+  const [touched, setTouched] = useState({});   // { fieldName: true } — se marcó al salir del input
   const [loading, setLoading] = useState(false);
 
-  // Valida un campo individual y devuelve el mensaje de error (o "")
-  const validateField = (field, value) => {
-    if (field.validate) return field.validate(value, form);
-    return "";
+  const validate = (name, value) => {
+    const validator = validators[name];
+    return validator ? validator(value, form) : null;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-    // Si ya fue tocado, revalida en tiempo real mientras escribe
+
+    // Si el campo ya fue tocado, revalida en tiempo real mientras escribe
     if (touched[name]) {
-      const field = fields.find((f) => f.name === name);
-      setErrors((prev) => ({ ...prev, [name]: validateField(field, value) }));
+      setErrors((prev) => ({ ...prev, [name]: validate(name, value) }));
     }
   };
 
   const handleBlur = (e) => {
     const { name, value } = e.target;
     setTouched((prev) => ({ ...prev, [name]: true }));
-    const field = fields.find((f) => f.name === name);
-    setErrors((prev) => ({ ...prev, [name]: validateField(field, value) }));
+    setErrors((prev) => ({ ...prev, [name]: validate(name, value) }));
   };
 
   const handleSubmit = () => {
-    // Marca todos como tocados y valida todos antes de enviar
+    // Validar todos los campos al enviar
     const allTouched = Object.fromEntries(fields.map((f) => [f.name, true]));
-    const allErrors  = Object.fromEntries(
-      fields.map((f) => [f.name, validateField(f, form[f.name])])
-    );
+    const allErrors  = Object.fromEntries(fields.map((f) => [f.name, validate(f.name, form[f.name])]));
+
     setTouched(allTouched);
     setErrors(allErrors);
 
-    const hasErrors = Object.values(allErrors).some((e) => e !== "");
+    const hasErrors = Object.values(allErrors).some(Boolean);
     if (hasErrors) return;
 
     setLoading(true);
@@ -75,7 +100,7 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
 
         {/* Header */}
         <div className="bg-white rounded-md px-6 py-4 text-center mb-8 shadow-sm">
-          <h1 className="text-2xl font-black tracking-widest text-black uppercase">ARIT</h1>
+          <h1 className="text-2xl font-black tracking-widest text-blue-600">ARIT</h1>
           <p className="text-gray-600 text-sm mt-1">{title}</p>
         </div>
 
@@ -83,13 +108,13 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
         <div className="space-y-5">
           {fields.map(({ name, label, type, placeholder }) => {
             const isTouched = touched[name];
-            const error     = errors[name] || serverErrors?.[name];
+            const error     = errors[name];
             const isValid   = isTouched && !error;
             const isInvalid = isTouched && !!error;
 
             return (
               <div key={name}>
-                {/* Label + icono de estado */}
+                {/* Label + icono */}
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   {label}
                   {isValid   && <IconCheck />}
@@ -104,25 +129,25 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
                   onChange={handleChange}
                   onBlur={handleBlur}
                   placeholder={placeholder}
-                  className={`w-full bg-gray-50 rounded-md px-4 py-3 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition border ${
-                    isInvalid
+                  className={`w-full bg-gray-50 rounded-md px-4 py-3 text-sm font-medium text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition border
+                    ${isInvalid
                       ? "border-red-500 focus:ring-red-400"
                       : isValid
-                      ? "border-green-500 focus:ring-green-400"
-                      : "border-gray-200 focus:ring-blue-500"
-                  }`}
+                        ? "border-green-500 focus:ring-green-400"
+                        : "border-gray-200 focus:ring-blue-600"
+                    }`}
                 />
 
                 {/* Mensaje de error */}
                 {isInvalid && (
-                  <p className="mt-1 text-xs text-red-500">{error}</p>
+                  <p className="text-red-500 text-xs mt-1">{error}</p>
                 )}
               </div>
             );
           })}
 
           {/* Footer link */}
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-center text-sm text-gray-600">
             {footerText}{" "}
             <a href={footerLinkHref} className="text-blue-500 hover:text-blue-700 font-medium transition-colors">
               {footerLinkText}
@@ -133,7 +158,7 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 disabled:opacity-70 text-white font-semibold text-lg py-3 rounded-md transition-colors duration-150 cursor-pointer"
+            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60 text-white font-semibold text-lg py-3 rounded-md transition-colors duration-200 cursor-pointer"
           >
             {loading ? "Cargando..." : submitLabel}
           </button>
@@ -144,39 +169,14 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
   );
 }
 
-// ─── Validaciones de Login ────────────────────────────────────────────────────
+// ─── Login ───────────────────────────────────────────────────────────────────
 
 const loginFields = [
-  {
-    name: "username",
-    label: "Nombre de usuario",
-    type: "text",
-    placeholder: "Introduce tu nombre de usuario",
-    validate: (value) => {
-      if (!value.trim()) return "El nombre de usuario no puede estar vacío.";
-      // TODO: cuando el backend esté listo, aquí llegará el error del servidor
-      // a través de la prop serverErrors, no hace falta tocar este archivo.
-      return "";
-    },
-  },
-  {
-    name: "password",
-    label: "Contraseña",
-    type: "password",
-    placeholder: "Introduce tu contraseña",
-    validate: (value) => {
-      if (!value) return "La contraseña no puede estar vacía.";
-      // TODO: el backend devolverá "Credenciales incorrectas" vía serverErrors.
-      return "";
-    },
-  },
+  { name: "username", label: "Nombre de usuario", type: "text",     placeholder: "Introduce tu nombre de usuario" },
+  { name: "password", label: "Contraseña",         type: "password", placeholder: "Introduce tu contraseña" },
 ];
 
 export function ARITLogin() {
-  // serverErrors se rellenará desde pages/Login.jsx cuando el backend responda
-  // Ejemplo: { username: "", password: "Usuario o contraseña incorrectos." }
-  const [serverErrors, setServerErrors] = useState({});
-
   return (
     <ARITAuthCard
       title="Iniciar sesión"
@@ -185,104 +185,42 @@ export function ARITLogin() {
       footerText="¿No tienes cuenta?"
       footerLinkText="Regístrate aquí"
       footerLinkHref="/register"
-      serverErrors={serverErrors}
       onSubmit={(data, done) => {
-        // TODO: sustituir por llamada real al backend
-        // authService.login(data)
-        //   .then(() => navigate("/dashboard"))
-        //   .catch((err) => setServerErrors({ password: err.message }))
-        //   .finally(done);
+        // TODO: llamar al backend aquí
+        // Ejemplo cuando el backend esté listo:
+        // const res = await authService.login(data.username, data.password);
+        // if (!res.ok) { mostrarError("Usuario o contraseña incorrectos"); done(); return; }
+        // navigate("/dashboard");
         console.log("Login:", data);
-        setTimeout(done, 1500);
+        setTimeout(done, 1000);
       }}
     />
   );
 }
 
-// ─── Validaciones de Register ─────────────────────────────────────────────────
+// ─── Register ────────────────────────────────────────────────────────────────
 
 const registerFields = [
-  {
-    name: "fullName",
-    label: "Nombre y apellidos",
-    type: "text",
-    placeholder: "Introduce tu nombre y apellidos",
-    validate: (value) => {
-      if (!value.trim()) return "El nombre no puede estar vacío.";
-      if (value.trim().split(" ").length < 2) return "Introduce nombre y al menos un apellido.";
-      return "";
-    },
-  },
-  {
-    name: "username",
-    label: "Nombre de usuario",
-    type: "text",
-    placeholder: "Crea tu nombre de usuario",
-    validate: (value) => {
-      if (!value.trim()) return "El nombre de usuario no puede estar vacío.";
-      if (value.length < 3) return "Debe tener al menos 3 caracteres.";
-      if (!/^[a-zA-Z0-9_]+$/.test(value)) return "Solo letras, números y guión bajo.";
-      return "";
-    },
-  },
-  {
-    name: "email",
-    label: "Correo electrónico",
-    type: "email",
-    placeholder: "Introduce tu correo",
-    validate: (value) => {
-      if (!value.trim()) return "El correo no puede estar vacío.";
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Introduce un correo válido.";
-      return "";
-    },
-  },
-  {
-    name: "password",
-    label: "Contraseña",
-    type: "password",
-    placeholder: "Crea tu contraseña",
-    validate: (value) => {
-      if (!value) return "La contraseña no puede estar vacía.";
-      if (value.length < 8) return "Debe tener al menos 8 caracteres.";
-      if (!/[A-Z]/.test(value)) return "Debe contener al menos una mayúscula.";
-      if (!/[0-9]/.test(value)) return "Debe contener al menos un número.";
-      return "";
-    },
-  },
-  {
-    name: "confirmPassword",
-    label: "Repite la contraseña",
-    type: "password",
-    placeholder: "Repite tu contraseña",
-    // El segundo argumento es el estado completo del formulario
-    validate: (value, form) => {
-      if (!value) return "Por favor repite la contraseña.";
-      if (value !== form.password) return "Las contraseñas no coinciden.";
-      return "";
-    },
-  },
+  { name: "fullName",        label: "Nombre y apellidos",   type: "text",     placeholder: "Introduce tu nombre y apellidos" },
+  { name: "username",        label: "Nombre de usuario",    type: "text",     placeholder: "Crea tu nombre de usuario" },
+  { name: "email",           label: "Correo electrónico",   type: "email",    placeholder: "Introduce tu correo" },
+  { name: "password",        label: "Contraseña",           type: "password", placeholder: "Crea tu contraseña" },
+  { name: "confirmPassword", label: "Repite la contraseña", type: "password", placeholder: "Repite tu contraseña" },
 ];
 
 export function ARITRegister() {
-  const [serverErrors, setServerErrors] = useState({});
-
   return (
     <ARITAuthCard
       title="Registrarse"
       fields={registerFields}
-      submitLabel="Registrarse"
+      submitLabel="Acceder"
       footerText="¿Ya tienes cuenta?"
       footerLinkText="Inicia sesión aquí"
       footerLinkHref="/login"
-      serverErrors={serverErrors}
       onSubmit={(data, done) => {
-        // TODO: sustituir por llamada real al backend
-        // authService.register(data)
-        //   .then(() => navigate("/login"))
-        //   .catch((err) => setServerErrors({ username: err.message }))
-        //   .finally(done);
+        // TODO: llamar al backend aquí
         console.log("Register:", data);
-        setTimeout(done, 1500);
+        setTimeout(done, 1000);
       }}
     />
   );
