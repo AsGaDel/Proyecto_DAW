@@ -22,7 +22,7 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
  
         {/* Header */}
         <div className="bg-white rounded-md px-6 py-4 text-center mb-8 shadow-sm">
-          <h1 className="text-2xl font-black tracking-widest text-black uppercase">ARIT</h1>
+          <h1 className="text-2xl font-black tracking-widest text-blue-600">ARIT</h1>
           <p className="text-gray-600 text-sm mt-1">{title}</p>
         </div>
  
@@ -39,13 +39,13 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
                 value={form[name]}
                 onChange={handleChange}
                 placeholder={placeholder}
-                className="w-full bg-gray-50 border border-gray-200 rounded-md px-4 py-3 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="w-full bg-gray-50 border border-gray-200 rounded-md px-4 py-3 text-sm font-medium text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
               />
             </div>
           ))}
  
           {/* Footer link */}
-          <p className="text-center text-sm text-gray-500">
+          <p className="text-center text-sm text-gray-600">
             {footerText}{" "}
             <a href={footerLinkHref} className="text-blue-500 hover:text-blue-700 font-medium transition-colors">
               {footerLinkText}
@@ -56,7 +56,7 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 active:bg-blue-700 disabled:opacity-70 text-white font-semibold text-lg py-3 rounded-md transition-colors duration-150 cursor-pointer"
+            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60 text-white font-semibold text-lg py-3 rounded-md transition-colors duration-200 cursor-pointer"
           >
             {loading ? "Cargando..." : submitLabel}
           </button>
@@ -85,7 +85,7 @@ export function ARITLogin() {
       footerLinkHref="/register"
       onSubmit={(data, done) => {
         console.log("Login:", data);
-        setTimeout(done, 1500);
+        setTimeout(done, 1000);
       }}
     />
   );
@@ -112,7 +112,7 @@ export function ARITRegister() {
       footerLinkHref="/login"
       onSubmit={(data, done) => {
         console.log("Register:", data);
-        setTimeout(done, 1500);
+        setTimeout(done, 1000);
       }}
     />
   );
