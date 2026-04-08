@@ -18,10 +18,20 @@ function IconX() {
   );
 }
 
+// ─── Estilos base de input ────────────────────────────────────────────────────
+
+const baseInputStyle = "w-full bg-gray-50 rounded-md px-4 py-3 text-sm font-medium text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition border";
+
+function inputStyle(isValid, isInvalid, showSuccess) {
+  if (isInvalid)              return `${baseInputStyle} border-red-500 focus:ring-red-400`;
+  if (isValid && showSuccess) return `${baseInputStyle} border-green-500 focus:ring-green-400`;
+  return `${baseInputStyle} border-gray-200 focus:ring-blue-600`;
+}
+
 // ─── Componente base reutilizable ────────────────────────────────────────────
 
-function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, footerLinkHref, onSubmit, serverErrors }) {
-  const initialState  = Object.fromEntries(fields.map((f) => [f.name, ""]));
+function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, footerLinkHref, onSubmit, serverErrors, showIcons = false }) {
+  const initialState   = Object.fromEntries(fields.map((f) => [f.name, ""]));
   const initialTouched = Object.fromEntries(fields.map((f) => [f.name, false]));
   const initialErrors  = Object.fromEntries(fields.map((f) => [f.name, ""]));
 
@@ -30,7 +40,6 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
   const [errors,  setErrors]  = useState(initialErrors);
   const [loading, setLoading] = useState(false);
 
-  // Valida un campo individual y devuelve el mensaje de error (o "")
   const validateField = (field, value) => {
     if (field.validate) return field.validate(value, form);
     return "";
@@ -39,7 +48,6 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-    // Si ya fue tocado, revalida en tiempo real mientras escribe
     if (touched[name]) {
       const field = fields.find((f) => f.name === name);
       setErrors((prev) => ({ ...prev, [name]: validateField(field, value) }));
@@ -54,11 +62,8 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
   };
 
   const handleSubmit = () => {
-    // Marca todos como tocados y valida todos antes de enviar
     const allTouched = Object.fromEntries(fields.map((f) => [f.name, true]));
-    const allErrors  = Object.fromEntries(
-      fields.map((f) => [f.name, validateField(f, form[f.name])])
-    );
+    const allErrors  = Object.fromEntries(fields.map((f) => [f.name, validateField(f, form[f.name])]));
     setTouched(allTouched);
     setErrors(allErrors);
 
@@ -81,7 +86,8 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
 
         {/* Fields */}
         <div className="space-y-5">
-          {fields.map(({ name, label, type, placeholder }) => {
+          {fields.map((field) => {
+            const { name, label, type, placeholder } = field;
             const isTouched = touched[name];
             const error     = errors[name] || serverErrors?.[name];
             const isValid   = isTouched && !error;
@@ -89,14 +95,13 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
 
             return (
               <div key={name}>
-                {/* Label + icono de estado */}
+                {/* Label + icono (solo si showIcons=true) */}
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   {label}
-                  {isValid   && <IconCheck />}
-                  {isInvalid && <IconX />}
+                  {showIcons && (isInvalid ? <IconX /> : isValid ? <IconCheck /> : null)}
                 </label>
 
-                {/* Input */}
+                {/* Input con estilos calculados dinámicamente aquí, no en el array */}
                 <input
                   type={type}
                   name={name}
@@ -104,13 +109,7 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
                   onChange={handleChange}
                   onBlur={handleBlur}
                   placeholder={placeholder}
-                  className={`w-full bg-gray-50 rounded-md px-4 py-3 text-sm font-medium text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition border ${
-                    isInvalid
-                      ? "border-red-500 focus:ring-red-400"
-                      : isValid
-                      ? "border-green-500 focus:ring-green-400"
-                      : "border-gray-200 focus:ring-blue-500"
-                  }`}
+                  className={inputStyle(isValid, isInvalid, showIcons)}
                 />
 
                 {/* Mensaje de error */}
@@ -144,7 +143,7 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
   );
 }
 
-// ─── Validaciones de Login ────────────────────────────────────────────────────
+// ─── Login ───────────────────────────────────────────────────────────────────
 
 const loginFields = [
   {
@@ -154,8 +153,6 @@ const loginFields = [
     placeholder: "Introduce tu nombre de usuario",
     validate: (value) => {
       if (!value.trim()) return "El nombre de usuario no puede estar vacío.";
-      // TODO: cuando el backend esté listo, aquí llegará el error del servidor
-      // a través de la prop serverErrors, no hace falta tocar este archivo.
       return "";
     },
   },
@@ -166,15 +163,12 @@ const loginFields = [
     placeholder: "Introduce tu contraseña",
     validate: (value) => {
       if (!value) return "La contraseña no puede estar vacía.";
-      // TODO: el backend devolverá "Credenciales incorrectas" vía serverErrors.
       return "";
     },
   },
 ];
 
 export function ARITLogin() {
-  // serverErrors se rellenará desde pages/Login.jsx cuando el backend responda
-  // Ejemplo: { username: "", password: "Usuario o contraseña incorrectos." }
   const [serverErrors, setServerErrors] = useState({});
 
   return (
@@ -186,20 +180,20 @@ export function ARITLogin() {
       footerLinkText="Regístrate aquí"
       footerLinkHref="/register"
       serverErrors={serverErrors}
+      showIcons={false}
       onSubmit={(data, done) => {
-        // TODO: sustituir por llamada real al backend
-        // authService.login(data)
+        // TODO: authService.login(data)
         //   .then(() => navigate("/dashboard"))
         //   .catch((err) => setServerErrors({ password: err.message }))
         //   .finally(done);
         console.log("Login:", data);
-        setTimeout(done, 2000);
+        setTimeout(done, 1000);
       }}
     />
   );
 }
 
-// ─── Validaciones de Register ─────────────────────────────────────────────────
+// ─── Register ────────────────────────────────────────────────────────────────
 
 const registerFields = [
   {
@@ -254,7 +248,6 @@ const registerFields = [
     label: "Repite la contraseña",
     type: "password",
     placeholder: "Repite tu contraseña",
-    // El segundo argumento es el estado completo del formulario
     validate: (value, form) => {
       if (!value) return "Por favor repite la contraseña.";
       if (value !== form.password) return "Las contraseñas no coinciden.";
@@ -275,14 +268,14 @@ export function ARITRegister() {
       footerLinkText="Inicia sesión aquí"
       footerLinkHref="/login"
       serverErrors={serverErrors}
+      showIcons={true}
       onSubmit={(data, done) => {
-        // TODO: sustituir por llamada real al backend
-        // authService.register(data)
+        // TODO: authService.register(data)
         //   .then(() => navigate("/login"))
         //   .catch((err) => setServerErrors({ username: err.message }))
         //   .finally(done);
         console.log("Register:", data);
-        setTimeout(done, 2000);
+        setTimeout(done, 1000);
       }}
     />
   );
