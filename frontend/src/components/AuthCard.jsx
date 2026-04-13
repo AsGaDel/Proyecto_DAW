@@ -72,6 +72,8 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
 
     setLoading(true);
     onSubmit?.(form, () => setLoading(false));
+
+    window.location = "/dashboard";
   };
 
   return (
@@ -132,8 +134,7 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60 text-white font-semibold text-lg py-3 rounded-md transition-colors duration-200 cursor-pointer"
-          >
+            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60 text-white font-semibold text-lg py-3 rounded-md transition-colors duration-300  cursor-pointer">
             {loading ? "Cargando..." : submitLabel}
           </button>
         </div>
