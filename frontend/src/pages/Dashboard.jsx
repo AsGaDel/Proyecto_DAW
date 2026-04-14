@@ -5,18 +5,24 @@ import StatGrid from "../components/StatGrid";
 import Footer from "../components/Footer";
 
 const sampleIncidents = [
-  { id: 1, name: "Bache en la calle",        photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",                                                                          priority: "Moderado", date: "Hace 4 horas"   },
-  { id: 2, name: "Señal de tráfico caída",   photo: "https://motor.elpais.com/wp-content/uploads/2024/08/senal-trafico-rota.jpg",                                                            priority: "Leve",     date: "Ayer"           },
-  { id: 3, name: "Acera en mal estado",      photo: "https://imagenes.segre.com/files/og_thumbnail/uploads/2025/12/30/69535736dbb2e.webp",                                                   priority: "Moderado", date: "Hace 1 hora"    },
-  { id: 4, name: "Farola en mal estado",     photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico",  date: "Hace 14 horas"  },
-  { id: 5, name: "Banco roto",               photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg",                                                        priority: "Leve",     date: "Hace una semana"},
-  { id: 6, name: "Alcantarilla sin tapa",    photo: "https://tecolotito.elsiglodetorreon.com.mx/i/2018/11/1115854.jpeg",                                                                     priority: "Crítico",  date: "Hace 3 días"    },
-  { id: 7, name: "Bache en la calle",        photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",                                                                          priority: "Moderado", date: "Hace 4 horas"   },
-  { id: 8, name: "Señal de tráfico caída",   photo: "https://motor.elpais.com/wp-content/uploads/2024/08/senal-trafico-rota.jpg",                                                            priority: "Leve",     date: "Ayer"           },
-  { id: 9, name: "Acera en mal estado",      photo: "https://imagenes.segre.com/files/og_thumbnail/uploads/2025/12/30/69535736dbb2e.webp",                                                   priority: "Moderado", date: "Hace 1 hora"    },
-  { id: 10, name: "Farola en mal estado",    photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico",  date: "Hace 14 horas"  },
-  { id: 11, name: "Banco roto",              photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg",                                                        priority: "Leve",     date: "Hace una semana"},
-  { id: 12, name: "Alcantarilla sin tapa",   photo: null,                                                                     priority: "Crítico",  date: "Hace 3 días"    }
+  { id: 1,  name: "Bache en la calle",        photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",         priority: "Moderado", date: new Date("2026-04-13T08:00:00"), author: { username: "carlos_m",  avatar: null } },
+  { id: 2,  name: "Señal de tráfico caída",   photo: "https://motor.elpais.com/wp-content/uploads/2024/08/senal-trafico-rota.jpg", priority: "Leve",  date: new Date("2026-04-12T10:30:00"), author: { username: "laura_g",   avatar: null } },
+  { id: 3,  name: "Acera en mal estado",      photo: "https://imagenes.segre.com/files/og_thumbnail/uploads/2025/12/30/69535736dbb2e.webp", priority: "Moderado", date: new Date("2026-04-13T11:00:00"), author: { username: "carlos_m",  avatar: null } },
+  { id: 4,  name: "Farola en mal estado",     photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico", date: new Date("2026-04-12T22:00:00"), author: { username: "pedro_r",   avatar: null } },
+  { id: 5,  name: "Banco roto",               photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg", priority: "Leve", date: new Date("2026-04-06T09:00:00"), author: { username: "laura_g",   avatar: null } },
+  { id: 6,  name: "Alcantarilla sin tapa",    photo: "https://tecolotito.elsiglodetorreon.com.mx/i/2018/11/1115854.jpeg", priority: "Crítico", date: new Date("2026-04-10T14:00:00"), author: { username: "ana_s",     avatar: null } },
+  { id: 7,  name: "Bache en la calle",        photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",         priority: "Moderado", date: new Date("2026-04-13T08:00:00"), author: { username: "pedro_r",   avatar: null } },
+  { id: 8,  name: "Señal de tráfico caída",   photo: "https://motor.elpais.com/wp-content/uploads/2024/08/senal-trafico-rota.jpg", priority: "Leve",  date: new Date("2026-04-12T10:30:00"), author: { username: "carlos_m",  avatar: null } },
+  { id: 9,  name: "Acera en mal estado",      photo: "https://imagenes.segre.com/files/og_thumbnail/uploads/2025/12/30/69535736dbb2e.webp", priority: "Moderado", date: new Date("2026-04-13T11:00:00"), author: { username: "ana_s",     avatar: null } },
+  { id: 10, name: "Farola en mal estado",     photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico", date: new Date("2026-04-12T22:00:00"), author: { username: "laura_g",   avatar: null } },
+  { id: 11, name: "Banco roto",               photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg", priority: "Leve", date: new Date("2026-04-06T09:00:00"), author: { username: "pedro_r",   avatar: null } },
+  { id: 12, name: "Alcantarilla sin tapa",    photo: null, priority: "Crítico", date: new Date("2026-04-10T14:00:00"), author: { username: "carlos_m",  avatar: null } },
+  { id: 13, name: "Bache en la calle",        photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",         priority: "Moderado", date: new Date("2026-04-11T08:00:00"), author: { username: "ana_s",     avatar: null } },
+  { id: 14, name: "Señal de tráfico caída",   photo: "https://motor.elpais.com/wp-content/uploads/2024/08/senal-trafico-rota.jpg", priority: "Leve",  date: new Date("2026-04-09T10:30:00"), author: { username: "laura_g",   avatar: null } },
+  { id: 15, name: "Acera en mal estado",      photo: "https://imagenes.segre.com/files/og_thumbnail/uploads/2025/12/30/69535736dbb2e.webp", priority: "Moderado", date: new Date("2026-04-08T11:00:00"), author: { username: "pedro_r",   avatar: null } },
+  { id: 16, name: "Farola en mal estado",     photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico", date: new Date("2026-04-07T22:00:00"), author: { username: "carlos_m",  avatar: null } },
+  { id: 17, name: "Banco roto",               photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg", priority: "Leve", date: new Date("2026-04-05T09:00:00"), author: { username: "ana_s",     avatar: null } },
+  { id: 18, name: "Alcantarilla sin tapa",    photo: "https://tecolotito.elsiglodetorreon.com.mx/i/2018/11/1115854.jpeg", priority: "Crítico", date: new Date("2026-04-04T14:00:00"), author: { username: "laura_g",   avatar: null } }
 ];
 
 const statsValues = [
@@ -37,7 +43,7 @@ const userActions = [
         <circle cx="4" cy="12" r="1"/>
         <circle cx="4" cy="18" r="1"/>
       </svg>),   
-    onClick: () => console.log("Ver incidentes") 
+    onClick: () => window.location = "/incident-list" 
   },
   { 
     label: "Nuevo incidente",         
@@ -121,7 +127,7 @@ export default function Dashboard() {
         {/* Columna izquierda: stats + incidentes */}
         <section className="bg-white dark:bg-black flex-1 px-4 mb-12 sm:px-8 lg:px-12 py-6 order-2 md:order-1">
           <StatGrid stats={statsValues} />
-          <CardGrid incidents={sampleIncidents} />
+          <CardGrid incidents={sampleIncidents} title={"Incidentes destacados"}/>
         </section>
         {/* Columna derecha: acciones — encima en móvil, lateral en desktop */}
         <aside className="fixed bottom-0 left-0 right-0 z-40 bg-gray-100 dark:bg-gray-600 border-t dark:border-gray-500 px-4 py-3

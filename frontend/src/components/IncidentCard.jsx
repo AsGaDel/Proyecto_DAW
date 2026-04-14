@@ -61,7 +61,7 @@ export default function IncidentCard({ name, photo, priority, date, author }) {
           : <span className="bg-black      text-red-50    bg-opacity-70 inline-block text-sm font-bold px-1 rounded-md mb-2">{priority}</span>
         }
         <div className="text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wide mb-2">{name}</div>
-        <div className="text-xs font-medium text-gray-700 dark:text-gray-200 tracking-wide">{date}</div>
+        <div className="text-xs font-medium text-gray-700 dark:text-gray-200 tracking-wide">{new Intl.DateTimeFormat("es-ES", { dateStyle: "medium", timeStyle: "short" }).format(date)}</div>
       </div>
 
     </div>
