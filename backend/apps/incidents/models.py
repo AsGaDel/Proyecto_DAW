@@ -9,6 +9,11 @@ class Incident(models.Model):
         RESOLVED    = 'resolved',    'Resuelto'
         DELETED     = 'deleted',     'Eliminado'
 
+    class Priority(models.TextChoices):
+        LOW    = 'low',    'Leve'
+        MEDIUM = 'medium', 'Moderado'
+        HIGH   = 'high',   'Crítico'
+
     title       = models.CharField(max_length=200)
     description = models.TextField()
     reporter    = models.ForeignKey(
@@ -17,6 +22,7 @@ class Incident(models.Model):
         related_name='reported_incidents',
     )
     status    = models.CharField(max_length=15, choices=Status.choices, default=Status.PENDING)
+    priority  = models.CharField(max_length=10, choices=Priority.choices, default=Priority.LOW)
     latitude  = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     address   = models.CharField(max_length=255, blank=True)

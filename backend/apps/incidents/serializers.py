@@ -11,28 +11,38 @@ class IncidentPhotoSerializer(serializers.ModelSerializer):
 
 
 class IncidentSerializer(serializers.ModelSerializer):
-    photos        = IncidentPhotoSerializer(many=True, read_only=True)
-    reporter_email = serializers.EmailField(source='reporter.email', read_only=True)
+    photos           = IncidentPhotoSerializer(many=True, read_only=True)
+    reporter_email   = serializers.EmailField(source='reporter.email', read_only=True)
+    reporter_username = serializers.CharField(source='reporter.username', read_only=True)
     # Campos calculados que dependen del usuario que hace la petición;
     # se computan mediante SerializerMethodField para poder acceder al request.
     is_voted      = serializers.SerializerMethodField()
     is_subscribed = serializers.SerializerMethodField()
+    # Objeto location anidado para compatibilidad con el frontend (location.address, location.latlng)
+    location      = serializers.SerializerMethodField()
 
     class Meta:
         model  = Incident
         fields = [
             'id', 'title', 'description',
-            'reporter', 'reporter_email',
-            'status', 'latitude', 'longitude', 'address',
+            'reporter', 'reporter_email', 'reporter_username',
+            'status', 'priority',
+            'latitude', 'longitude', 'address', 'location',
             'vote_count', 'is_voted', 'is_subscribed',
             'created_at', 'updated_at',
             'deleted_at', 'deleted_reason', 'admin_notes',
             'photos',
         ]
         read_only_fields = [
-            'reporter', 'reporter_email', 'vote_count',
-            'created_at', 'updated_at', 'deleted_at',
+            'reporter', 'reporter_email', 'reporter_username',
+            'vote_count', 'created_at', 'updated_at', 'deleted_at', 'location',
         ]
+
+    def get_location(self, obj):
+        return {
+            'address': obj.address,
+            'latlng': {'lat': float(obj.latitude), 'lng': float(obj.longitude)},
+        }
 
     def get_is_voted(self, obj):
         # Acceder al request desde el contexto que inyecta el ViewSet automáticamente

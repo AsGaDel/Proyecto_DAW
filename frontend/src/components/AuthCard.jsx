@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import authService from "../api/authService";
 
 // ─── Iconos ──────────────────────────────────────────────────────────────────
 
@@ -72,8 +74,6 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
 
     setLoading(true);
     onSubmit?.(form, () => setLoading(false));
-
-    window.location = "/dashboard";
   };
 
   return (
@@ -148,12 +148,13 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
 
 const loginFields = [
   {
-    name: "username",
-    label: "Nombre de usuario",
-    type: "text",
-    placeholder: "Introduce tu nombre de usuario",
+    name: "email",
+    label: "Correo electrónico",
+    type: "email",
+    placeholder: "Introduce tu correo",
     validate: (value) => {
-      if (!value.trim()) return "El nombre de usuario no puede estar vacío.";
+      if (!value.trim()) return "El correo no puede estar vacío.";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Introduce un correo válido.";
       return "";
     },
   },
@@ -171,6 +172,7 @@ const loginFields = [
 
 export function ARITLogin() {
   const [serverErrors, setServerErrors] = useState({});
+  const navigate = useNavigate();
 
   return (
     <ARITAuthCard
@@ -183,12 +185,10 @@ export function ARITLogin() {
       serverErrors={serverErrors}
       showIcons={false}
       onSubmit={(data, done) => {
-        // TODO: authService.login(data)
-        //   .then(() => navigate("/dashboard"))
-        //   .catch((err) => setServerErrors({ password: err.message }))
-        //   .finally(done);
-        console.log("Login:", data);
-        setTimeout(done, 1000);
+        authService.login(data)
+          .then(() => navigate("/dashboard"))
+          .catch(() => setServerErrors({ password: "Correo o contraseña incorrectos." }))
+          .finally(done);
       }}
     />
   );
@@ -259,6 +259,7 @@ const registerFields = [
 
 export function ARITRegister() {
   const [serverErrors, setServerErrors] = useState({});
+  const navigate = useNavigate();
 
   return (
     <ARITAuthCard
@@ -271,12 +272,16 @@ export function ARITRegister() {
       serverErrors={serverErrors}
       showIcons={true}
       onSubmit={(data, done) => {
-        // TODO: authService.register(data)
-        //   .then(() => navigate("/login"))
-        //   .catch((err) => setServerErrors({ username: err.message }))
-        //   .finally(done);
-        console.log("Register:", data);
-        setTimeout(done, 1000);
+        authService.register(data)
+          .then(() => navigate("/login"))
+          .catch((err) => {
+            const detail = err.response?.data;
+            setServerErrors({
+              email:    detail?.email?.[0]    ?? "",
+              username: detail?.username?.[0] ?? "",
+            });
+          })
+          .finally(done);
       }}
     />
   );

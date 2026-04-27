@@ -9,4 +9,4 @@ class IncidentFilter(django_filters.FilterSet):
 
     class Meta:
         model = Incident
-        fields = ['status', 'date_from', 'date_to']
+        fields = ['status', 'priority', 'date_from', 'date_to']
