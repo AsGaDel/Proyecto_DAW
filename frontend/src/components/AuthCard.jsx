@@ -77,11 +77,11 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
-      <div className="bg-gray-200 rounded-lg p-8 w-full max-w-md shadow-sm">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg p-8 w-full max-w-md shadow-sm">
 
         {/* Header */}
-        <div className="bg-white rounded-md px-6 py-4 text-center mb-8 shadow-sm">
+        <div className="bg-gray-50 border border-gray-100  rounded-md px-6 py-4 text-center mb-8 shadow-sm">
           <h1 className="text-2xl font-black tracking-widest text-blue-600">ARIT</h1>
           <p className="text-gray-600 text-sm mt-1">{title}</p>
         </div>

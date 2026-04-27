@@ -23,7 +23,7 @@ export function Dropdown({ trigger, children, align = "right" }) {
 
       {/* Menú */}
       {open && (
-        <div className={`absolute ${alignClass} mt-2 w-48 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg z-50 overflow-hidden`}>
+        <div className={`absolute ${alignClass} mt-2 w-32 bg-white border-gray-200 rounded-lg shadow-lg z-[100] overflow-hidden`}>
           {children}
         </div>
       )}
@@ -40,8 +40,8 @@ export function DropdownItem({ label, onClick, danger = false }) {
         onClick={(e) => { e.stopPropagation(); onClick?.(); }}
         className={`w-full text-left px-4 py-2.5 text-sm transition-colors
           ${danger
-            ? "text-red-500 hover:bg-red-50 dark:hover:bg-gray-900"
-            : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900"
+            ? "text-red-500 hover:bg-red-50"
+            : "text-gray-700 hover:bg-gray-50"
           }`}
       >
         {label}

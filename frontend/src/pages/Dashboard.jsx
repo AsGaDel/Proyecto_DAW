@@ -10,19 +10,13 @@ const sampleIncidents = [
   { id: 3,  name: "Acera en mal estado",      photo: "https://imagenes.segre.com/files/og_thumbnail/uploads/2025/12/30/69535736dbb2e.webp", priority: "Moderado", date: new Date("2026-04-13T11:00:00"), author: { username: "carlos_m",  avatar: null } },
   { id: 4,  name: "Farola en mal estado",     photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico", date: new Date("2026-04-12T22:00:00"), author: { username: "pedro_r",   avatar: null } },
   { id: 5,  name: "Banco roto",               photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg", priority: "Leve", date: new Date("2026-04-06T09:00:00"), author: { username: "laura_g",   avatar: null } },
-  { id: 6,  name: "Alcantarilla sin tapa",    photo: "https://tecolotito.elsiglodetorreon.com.mx/i/2018/11/1115854.jpeg", priority: "Crítico", date: new Date("2026-04-10T14:00:00"), author: { username: "ana_s",     avatar: null } },
+  { id: 6,  name: "Alcantarilla sin tapa",    photo: "https://tecolotito.elsiglodetorreon.com.mx/i/2018/11/1115854.jpeg", priority: "Crítico", date: new Date("2026-04-10T14:00:00"), author: { username: "ana_s",     avatar: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg" } },
   { id: 7,  name: "Bache en la calle",        photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",         priority: "Moderado", date: new Date("2026-04-13T08:00:00"), author: { username: "pedro_r",   avatar: null } },
   { id: 8,  name: "Señal de tráfico caída",   photo: "https://motor.elpais.com/wp-content/uploads/2024/08/senal-trafico-rota.jpg", priority: "Leve",  date: new Date("2026-04-12T10:30:00"), author: { username: "carlos_m",  avatar: null } },
-  { id: 9,  name: "Acera en mal estado",      photo: "https://imagenes.segre.com/files/og_thumbnail/uploads/2025/12/30/69535736dbb2e.webp", priority: "Moderado", date: new Date("2026-04-13T11:00:00"), author: { username: "ana_s",     avatar: null } },
+  { id: 9,  name: "Acera en mal estado",      photo: "https://imagenes.segre.com/files/og_thumbnail/uploads/2025/12/30/69535736dbb2e.webp", priority: "Moderado", date: new Date("2026-04-13T11:00:00"), author: { username: "ana_s",     avatar: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg" } },
   { id: 10, name: "Farola en mal estado",     photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico", date: new Date("2026-04-12T22:00:00"), author: { username: "laura_g",   avatar: null } },
   { id: 11, name: "Banco roto",               photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg", priority: "Leve", date: new Date("2026-04-06T09:00:00"), author: { username: "pedro_r",   avatar: null } },
-  { id: 12, name: "Alcantarilla sin tapa",    photo: null, priority: "Crítico", date: new Date("2026-04-10T14:00:00"), author: { username: "carlos_m",  avatar: null } },
-  { id: 13, name: "Bache en la calle",        photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",         priority: "Moderado", date: new Date("2026-04-11T08:00:00"), author: { username: "ana_s",     avatar: null } },
-  { id: 14, name: "Señal de tráfico caída",   photo: "https://motor.elpais.com/wp-content/uploads/2024/08/senal-trafico-rota.jpg", priority: "Leve",  date: new Date("2026-04-09T10:30:00"), author: { username: "laura_g",   avatar: null } },
-  { id: 15, name: "Acera en mal estado",      photo: "https://imagenes.segre.com/files/og_thumbnail/uploads/2025/12/30/69535736dbb2e.webp", priority: "Moderado", date: new Date("2026-04-08T11:00:00"), author: { username: "pedro_r",   avatar: null } },
-  { id: 16, name: "Farola en mal estado",     photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico", date: new Date("2026-04-07T22:00:00"), author: { username: "carlos_m",  avatar: null } },
-  { id: 17, name: "Banco roto",               photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg", priority: "Leve", date: new Date("2026-04-05T09:00:00"), author: { username: "ana_s",     avatar: null } },
-  { id: 18, name: "Alcantarilla sin tapa",    photo: "https://tecolotito.elsiglodetorreon.com.mx/i/2018/11/1115854.jpeg", priority: "Crítico", date: new Date("2026-04-04T14:00:00"), author: { username: "laura_g",   avatar: null } }
+  { id: 12, name: "Alcantarilla sin tapa",    photo: null, priority: "Crítico", date: new Date("2026-04-10T14:00:00"), author: { username: "carlos_m",  avatar: null } }
 ];
 
 const statsValues = [
@@ -52,7 +46,7 @@ const userActions = [
         <line x1="12" y1="5" x2="12" y2="19"/>
         <line x1="5" y1="12" x2="19" y2="12"/>
       </svg>),
-    onClick: () => console.log("Reportar") 
+    onClick: () => window.location = "/create-incident" 
 },
   { 
     label: "Suscritos",
@@ -121,19 +115,19 @@ const totalAdminActions = [...userActions, ...adminActions];
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-700 flex flex-col pb-20 md:pb-0">
+    <div className="min-h-screen bg-gray-100 flex flex-col pb-20 md:pb-0">
       <Navbar appName="ARIT"/*  photo={null} */ />
       <main className="flex flex-col md:flex-row flex-1 md:px-4 lg:px-12 xl:px-24">
         {/* Columna izquierda: stats + incidentes */}
-        <section className="bg-white dark:bg-black flex-1 px-4 mb-12 sm:px-8 lg:px-12 py-6 order-2 md:order-1">
+        <section className="bg-gray-100 flex-1 px-4 mb-12 sm:px-8 lg:px-12 py-6 order-2 md:order-1">
           <StatGrid stats={statsValues} />
           <CardGrid incidents={sampleIncidents} title={"Incidentes destacados"}/>
         </section>
         {/* Columna derecha: acciones — encima en móvil, lateral en desktop */}
-        <aside className="fixed bottom-0 left-0 right-0 z-40 bg-gray-100 dark:bg-gray-600 border-t dark:border-gray-500 px-4 py-3
-          md:sticky md:top-14 md:self-start md:h-fit md:border-t-0 md:border-l-0 md:w-56 md:shrink-0 md:px-0 md:py-6 md:order-last
-          lg:w-64 md:bg-transparent md:dark:bg-transparent">
-          <ActionButtons actions={totalWorkerActions} />
+        <aside className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t px-4 py-3
+          lg:sticky lg:top-14 lg:self-start lg:h-fit lg:border-t-0 lg:border-l-0 lg:w-56 lg:shrink-0 lg:px-0 lg:py-6 lg:order-last
+          xl:w-64 lg:bg-transparent ">
+          <ActionButtons actions={userActions }/>
         </aside>
       </main>
       <Footer />

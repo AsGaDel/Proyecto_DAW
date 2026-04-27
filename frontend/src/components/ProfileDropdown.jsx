@@ -1,9 +1,11 @@
 import { Dropdown, DropdownItem } from "./Dropdown";
+import { useNavigate } from "react-router-dom";
 
 export default function ProfileDropdown() {
+  const navigate = useNavigate();
   function logout() {
     /* localStorage.removeItem("token"); */
-    window.location.href = "/login";
+    navigate("/login");
   }
 
   const trigger = (
@@ -18,12 +20,12 @@ export default function ProfileDropdown() {
 
   return (
     <Dropdown trigger={trigger} align="right">
-      <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-900">
-        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">Edwar G.</p>
+      <div className="px-4 py-3 border-b border-gray-100">
+        <p className="text-sm font-semibold text-gray-800">Edwar G.</p>
         <p className="text-xs text-gray-400">edwargg@arit.com</p>
       </div>
       <ul>
-        <DropdownItem label="Ver perfil"    onClick={() => {}} />
+        <DropdownItem label="Ver perfil"    onClick={() => navigate("/user-profile")} />
         <DropdownItem label="Configuración" onClick={() => {}} />
         <DropdownItem label="Cerrar sesión" onClick={logout} danger />
       </ul>

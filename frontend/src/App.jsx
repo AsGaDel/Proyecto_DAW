@@ -4,9 +4,12 @@ import Register  from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import IncidentList from "./pages/IncidentList"
 import { useTheme } from "./hooks/useTheme";
+import IncidentDetails from "./pages/IncidentDetails";
+import CreateIncident from "./pages/CreateIncident";
+import UserProfile from "./pages/UserProfile";
+
 
 function App() {
-  /* useTheme(); */
   
   return (
     <BrowserRouter>
@@ -16,6 +19,9 @@ function App() {
         <Route path="/register"  element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/incident-list" element={<IncidentList />} />
+        <Route path="/incident-details" element={<IncidentDetails />} />
+        <Route path="/create-incident" element={<CreateIncident />} />
+        <Route path="/user-profile" element={<UserProfile />} />
       </Routes>
     </BrowserRouter>
   );
