@@ -4,8 +4,11 @@ import "leaflet/dist/leaflet.css";
 import App from './App.jsx'
 import './index.css'
 
+import { ToastProvider } from "./components/ToastContainer";
+
+
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  <ToastProvider>
     <App />
-  </React.StrictMode>,
+  </ToastProvider>,
 )

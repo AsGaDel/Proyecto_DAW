@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 import Navbar from "../components/Navbar";
 import CardGrid from "../components/CardGrid";
 import ActionButtons from "../components/ActionButtons";
@@ -5,18 +7,18 @@ import StatGrid from "../components/StatGrid";
 import Footer from "../components/Footer";
 
 const sampleIncidents = [
-  { id: 1,  name: "Bache en la calle",        photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",         priority: "Moderado", date: new Date("2026-04-13T08:00:00"), author: { username: "carlos_m",  avatar: null } },
-  { id: 2,  name: "Señal de tráfico caída",   photo: "https://motor.elpais.com/wp-content/uploads/2024/08/senal-trafico-rota.jpg", priority: "Leve",  date: new Date("2026-04-12T10:30:00"), author: { username: "laura_g",   avatar: null } },
-  { id: 3,  name: "Acera en mal estado",      photo: "https://imagenes.segre.com/files/og_thumbnail/uploads/2025/12/30/69535736dbb2e.webp", priority: "Moderado", date: new Date("2026-04-13T11:00:00"), author: { username: "carlos_m",  avatar: null } },
-  { id: 4,  name: "Farola en mal estado",     photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico", date: new Date("2026-04-12T22:00:00"), author: { username: "pedro_r",   avatar: null } },
-  { id: 5,  name: "Banco roto",               photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg", priority: "Leve", date: new Date("2026-04-06T09:00:00"), author: { username: "laura_g",   avatar: null } },
-  { id: 6,  name: "Alcantarilla sin tapa",    photo: "https://tecolotito.elsiglodetorreon.com.mx/i/2018/11/1115854.jpeg", priority: "Crítico", date: new Date("2026-04-10T14:00:00"), author: { username: "ana_s",     avatar: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg" } },
-  { id: 7,  name: "Bache en la calle",        photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",         priority: "Moderado", date: new Date("2026-04-13T08:00:00"), author: { username: "pedro_r",   avatar: null } },
-  { id: 8,  name: "Señal de tráfico caída",   photo: "https://motor.elpais.com/wp-content/uploads/2024/08/senal-trafico-rota.jpg", priority: "Leve",  date: new Date("2026-04-12T10:30:00"), author: { username: "carlos_m",  avatar: null } },
-  { id: 9,  name: "Acera en mal estado",      photo: "https://imagenes.segre.com/files/og_thumbnail/uploads/2025/12/30/69535736dbb2e.webp", priority: "Moderado", date: new Date("2026-04-13T11:00:00"), author: { username: "ana_s",     avatar: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg" } },
-  { id: 10, name: "Farola en mal estado",     photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico", date: new Date("2026-04-12T22:00:00"), author: { username: "laura_g",   avatar: null } },
-  { id: 11, name: "Banco roto",               photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg", priority: "Leve", date: new Date("2026-04-06T09:00:00"), author: { username: "pedro_r",   avatar: null } },
-  { id: 12, name: "Alcantarilla sin tapa",    photo: null, priority: "Crítico", date: new Date("2026-04-10T14:00:00"), author: { username: "carlos_m",  avatar: null } }
+  { id: 1,  name: "Bache en la calle",        photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",         priority: "Moderado", category: "Infraestructura", date: new Date("2026-04-13T08:00:00"), author: { username: "carlos_m",  avatar: null } },
+  { id: 2,  name: "Señal de tráfico caída",   photo: "https://motor.elpais.com/wp-content/uploads/2024/08/senal-trafico-rota.jpg", priority: "Leve", category: "Infraestructura",  date: new Date("2026-04-12T10:30:00"), author: { username: "laura_g",   avatar: null } },
+  { id: 3,  name: "Acera en mal estado",      photo: "https://imagenes.segre.com/files/og_thumbnail/uploads/2025/12/30/69535736dbb2e.webp", priority: "Moderado", category: "Infraestructura", date: new Date("2026-04-13T11:00:00"), author: { username: "carlos_m",  avatar: null } },
+  { id: 4,  name: "Farola en mal estado",     photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico", category: "Infraestructura", date: new Date("2026-04-12T22:00:00"), author: { username: "pedro_r",   avatar: null } },
+  { id: 5,  name: "Banco roto",               photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg", priority: "Leve", category: "Infraestructura", date: new Date("2026-04-06T09:00:00"), author: { username: "laura_g",   avatar: null } },
+  { id: 6,  name: "Alcantarilla sin tapa",    photo: "https://tecolotito.elsiglodetorreon.com.mx/i/2018/11/1115854.jpeg", priority: "Crítico", category: "Infraestructura", date: new Date("2026-04-10T14:00:00"), author: { username: "ana_s",     avatar: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg" } },
+  { id: 7,  name: "Bache en la calle",        photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",         priority: "Moderado", category: "Infraestructura", date: new Date("2026-04-13T08:00:00"), author: { username: "pedro_r",   avatar: null } },
+  { id: 8,  name: "Señal de tráfico caída",   photo: "https://motor.elpais.com/wp-content/uploads/2024/08/senal-trafico-rota.jpg", priority: "Leve", category: "Infraestructura",  date: new Date("2026-04-12T10:30:00"), author: { username: "carlos_m",  avatar: null } },
+  { id: 9,  name: "Acera en mal estado",      photo: "https://imagenes.segre.com/files/og_thumbnail/uploads/2025/12/30/69535736dbb2e.webp", priority: "Moderado", category: "Infraestructura", date: new Date("2026-04-13T11:00:00"), author: { username: "ana_s",     avatar: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg" } },
+  { id: 10, name: "Farola en mal estado",     photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico", category: "Infraestructura", date: new Date("2026-04-12T22:00:00"), author: { username: "laura_g",   avatar: null } },
+  { id: 11, name: "Banco roto",               photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg", priority: "Leve", category: "Infraestructura", date: new Date("2026-04-06T09:00:00"), author: { username: "pedro_r",   avatar: null } },
+  { id: 12, name: "Alcantarilla sin tapa",    photo: null, priority: "Crítico", category: "Infraestructura", date: new Date("2026-04-10T14:00:00"), author: { username: "carlos_m",  avatar: null } }
 ];
 
 const statsValues = [
@@ -25,9 +27,23 @@ const statsValues = [
   { id: 3, label: "Resueltos este mes",     value: 9 },
 ];
 
-const userActions = [
+export default function Dashboard() {
+  const navigate = useNavigate();
+
+  const userActions = [
+    { 
+    label: "Página principal",
+    href: "/dashboard",     
+    svg: 
+      (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none">
+        <path d="M4 11L12 5L20 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M6 10V19H18V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>),   
+    onClick: () => navigate("/dashboard") 
+  },
   { 
-    label: "Ver incidentes",     
+    label: "Ver todos",
+    href: "/incident-list",     
     svg: 
       (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
         <line x1="8" y1="6" x2="20" y2="6"/>
@@ -37,34 +53,37 @@ const userActions = [
         <circle cx="4" cy="12" r="1"/>
         <circle cx="4" cy="18" r="1"/>
       </svg>),   
-    onClick: () => window.location = "/incident-list" 
+    onClick: () => navigate("/incident-list") 
   },
   { 
-    label: "Nuevo incidente",         
+    label: "Nuevo incidente",
+    href: "/create-incident",         
     svg: 
       (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
         <line x1="12" y1="5" x2="12" y2="19"/>
         <line x1="5" y1="12" x2="19" y2="12"/>
       </svg>),
-    onClick: () => window.location = "/create-incident" 
+    onClick: () => navigate("/create-incident") 
 },
   { 
     label: "Suscritos",
+    href: "/subscribed",
     svg: 
     (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
       <path d="M12 2l2.9 6.9 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.5l7.1-.6L12 2z"/>
     </svg>),       
-    onClick: () => console.log("Suscritos") 
+    onClick: () => navigate("/subscribed") 
   },
   { 
-    label: "Mis incidentes",      
-        svg: 
-    (<svg viewBox="0 0 24 24" className="w-6 h-6 stroke-current fill-none">
-      <path d="M6 2h9l5 5v15H6z" strokeWidth="2"/>
-      <line x1="9" y1="13" x2="15" y2="13" strokeWidth="2"/>
-      <line x1="9" y1="17" x2="15" y2="17" strokeWidth="2"/>
-    </svg>),
-    onClick: () => console.log("Mis incidentes") 
+    label: "Mis incidentes",
+    href: "/my-incidents",      
+    svg: 
+      (<svg viewBox="0 0 24 24" className="w-6 h-6 stroke-current fill-none">
+        <path d="M6 2h9l5 5v15H6z" strokeWidth="2"/>
+        <line x1="9" y1="13" x2="15" y2="13" strokeWidth="2"/>
+        <line x1="9" y1="17" x2="15" y2="17" strokeWidth="2"/>
+      </svg>),
+    onClick: () => navigate("/my-incidents") 
   }
 ];
 
@@ -113,9 +132,9 @@ const workerActions = [
 const totalWorkerActions = [...userActions, ...workerActions];
 const totalAdminActions = [...userActions, ...adminActions];
 
-export default function Dashboard() {
+
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col pb-20 md:pb-0">
+    <div className="min-h-screen bg-gray-100 flex flex-col pb-20 lg:pb-0">
       <Navbar appName="ARIT"/*  photo={null} */ />
       <main className="flex flex-col md:flex-row flex-1 md:px-4 lg:px-12 xl:px-24">
         {/* Columna izquierda: stats + incidentes */}

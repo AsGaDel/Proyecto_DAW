@@ -16,6 +16,7 @@ const sampleIncident = {
   },
   description: "Bache de gran tamaño localizado en el carril derecho de la calzada. Supone un peligro para los vehículos y especialmente para los ciclistas. Ha sido reportado en varias ocasiones sin que se haya tomado ninguna medida hasta la fecha.",
   priority:    "Moderado",
+  category:    "Infraestructura",
   photo:       "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",
   date:        new Date("2026-04-13T08:00:00"),
   author:      { username: "carlos_m", avatar: null },
@@ -45,6 +46,7 @@ export default function IncidentDetails() {
               location={incident.location}
               description={incident.description}
               priority={incident.priority}
+              category={incident.category}
               date={incident.date}
               author={incident.author}
             />

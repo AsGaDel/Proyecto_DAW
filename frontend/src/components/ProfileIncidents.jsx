@@ -2,7 +2,7 @@ import CardGrid from "./CardGrid";
 
 export default function ProfileIncidents({ incidents }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+    <div className="bg-white p-0 shadow-sm">
       <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-5">
         Mis incidentes reportados
         <span className="ml-2 text-gray-400 font-normal normal-case">({incidents.length})</span>
@@ -17,7 +17,7 @@ export default function ProfileIncidents({ incidents }) {
             <p className="text-sm text-gray-400">Todavía no has reportado ningún incidente.</p>
           </div>
         )
-        : <CardGrid incidents={incidents} />
+        : <CardGrid incidents={incidents}  isCompact />
       }
     </div>
   );

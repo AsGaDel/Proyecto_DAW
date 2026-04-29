@@ -95,14 +95,14 @@ export default function LocationPicker({ value, onChange }) {
       {/* Campo de ubicación */}
       <div
         onClick={handleOpen}
-        className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2.5 text-sm cursor-pointer flex items-center gap-2 hover:border-blue-400 transition-colors"
+        className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-sm cursor-pointer flex items-center gap-2 hover:border-blue-400 transition-colors"
       >
         <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 21C12 21 5 13.5 5 8.5a7 7 0 0114 0C19 13.5 12 21 12 21z" />
           <circle cx="12" cy="8.5" r="2.5" fill="currentColor" stroke="none" />
         </svg>
         {address
-          ? <span className="text-gray-700 dark:text-gray-200 truncate">{address}</span>
+          ? <span className="text-gray-700 truncate">{address}</span>
           : <span className="text-gray-400">Haz clic para seleccionar en el mapa</span>
         }
         {address && (
@@ -120,17 +120,17 @@ export default function LocationPicker({ value, onChange }) {
       {/* Modal con el mapa */}
       {open && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl flex flex-col overflow-hidden">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl flex flex-col overflow-hidden">
 
             {/* Cabecera */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
               <div>
-                <h3 className="text-sm font-semibold text-gray-800 dark:text-white">Seleccionar ubicación</h3>
+                <h3 className="text-sm font-semibold text-gray-800">Seleccionar ubicación</h3>
                 <p className="text-xs text-gray-400 mt-0.5">Haz clic en el mapa para marcar el incidente</p>
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -156,12 +156,12 @@ export default function LocationPicker({ value, onChange }) {
             </div>
 
             {/* Dirección detectada + botón confirmar */}
-            <div className="px-5 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center gap-3">
+            <div className="px-5 py-4 border-t border-gray-200 flex items-center gap-3">
               <div className="flex-1 min-w-0">
                 {loading
                   ? <p className="text-xs text-gray-400">Obteniendo dirección...</p>
                   : address
-                    ? <p className="text-xs text-gray-600 dark:text-gray-300 truncate">{address}</p>
+                    ? <p className="text-xs text-gray-600 truncate">{address}</p>
                     : <p className="text-xs text-gray-400">Ninguna ubicación seleccionada</p>
                 }
               </div>

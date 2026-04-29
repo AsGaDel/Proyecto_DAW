@@ -1,17 +1,17 @@
 const priorities = ["Leve", "Moderado", "Crítico"];
 
 const priorityStyles = {
-  Leve:     { active: "bg-green-600  text-green-50",  inactive: "bg-blsck text-gray-500 border border-gray-200" },
-  Moderado: { active: "bg-yellow-600 text-yellow-50", inactive: "bg-white text-gray-500 border border-gray-200" },
-  Crítico:  { active: "bg-red-600    text-red-50",    inactive: "bg-white text-gray-500 border border-gray-200" }
+  Leve:     { active: "bg-green-700  text-green-50",  inactive: "bg-white text-gray-500 border border-gray-200" },
+  Moderado: { active: "bg-yellow-700 text-yellow-50", inactive: "bg-white text-gray-500 border border-gray-200" },
+  Crítico:  { active: "bg-red-700    text-red-50",    inactive: "bg-white text-gray-500 border border-gray-200" }
 };
 
 // ─── Sección colapsable ───────────────────────────────────────────────────────
 
 function Section({ title, children }) {
   return (
-    <div className="mb-4">
-      <p className="md:text-xs lg:text-sm font-bold text-gray-600 mb-1 uppercase tracking-wider">
+    <div className="min-w-36 flex-1">
+      <p className="text-xs lg:text-sm font-bold text-gray-600 mb-1 uppercase tracking-wider">
         {title}
       </p>
       {children}
@@ -21,7 +21,7 @@ function Section({ title, children }) {
 
 // ─── FilterPanel ──────────────────────────────────────────────────────────────
 
-export default function FilterPanel({ filters, onChange, authors = [] }) {
+export default function FilterPanel({ filters, onChange, authors = [], horizontal = false  }) {
   const togglePriority = (priority) => {
     const current = filters.priorities ?? [];
     const updated = current.includes(priority)
@@ -38,12 +38,26 @@ export default function FilterPanel({ filters, onChange, authors = [] }) {
     (filters.dateTo     ?? "")         !== "";
 
   return (
-    <div className="flex flex-col gap-2 w-full min-w-0 md:rounded-lg md:border md:border-gray-100 
-       md:bg-white md:shadow-sm md:overflow-hidden md:p-2">
+    <div className={horizontal
+      ? "hidden lg:flex lg:flex-wrap lg:items-start lg:gap-3 lg:w-full lg:min-w-0 lg:rounded-lg lg:border lg:border-gray-100 lg:bg-white lg:shadow-sm lg:overflow-hidden lg:p-2"
+      : "flex flex-col gap-2 w-full min-w-0" }>
 
-      {/* Cabecera */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="font-bold text-gray-500 uppercase text-md mt-2 hidden overflow-hidden md:inline">Filtros</div>
+      {/* Búsqueda por texto */}
+      <div className="flex flex-col gap-1 min-w-36 flex-1">
+        <Section title="Buscar" className="font-semibold" >
+          <div className="relative shadow-sm">
+            <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+            </svg>
+            <input
+              type="text"
+              value={filters.search ?? ""}
+              onChange={(e) => onChange({ ...filters, search: e.target.value })}
+              placeholder="Nombre del incidente..."
+              className="w-full bg-white border border-gray-100 rounded-lg pl-8 pr-3 py-2 text-xs text-gray-700 
+                placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"/>
+          </div>
+        </Section>
         {hasActiveFilters && (
           <button
             onClick={() => onChange({ search: "", priorities: [], author: "", dateFrom: "", dateTo: "" })}
@@ -52,22 +66,7 @@ export default function FilterPanel({ filters, onChange, authors = [] }) {
           </button>
         )}
       </div>
-
-      {/* Búsqueda por texto */}
-      <Section title="Buscar" className="font-semibold" >
-        <div className="relative shadow-sm">
-          <svg className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
-          </svg>
-          <input
-            type="text"
-            value={filters.search ?? ""}
-            onChange={(e) => onChange({ ...filters, search: e.target.value })}
-            placeholder="Nombre del incidente..."
-            className="w-full bg-white border border-gray-100 rounded-lg pl-8 pr-3 py-2 text-xs text-gray-700 
-              placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"/>
-        </div>
-      </Section>
+      
 
       {/* Filtro por prioridad */}
       <Section title="Prioridad">
@@ -112,20 +111,6 @@ export default function FilterPanel({ filters, onChange, authors = [] }) {
           </div>
         </div>
       </Section>
-
-      {/* Filtro por autor */}
-      {/* <Section title="Autor">
-        <select
-          value={filters.author ?? ""}
-          onChange={(e) => onChange({ ...filters, author: e.target.value })}
-          className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 
-            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition shadow-sm">
-          <option value="">Todos los autores</option>
-          {authors.map((author) => (
-            <option key={author} value={author}>{author}</option>
-          ))}
-        </select>
-      </Section> */}
 
     </div>
   );

@@ -6,25 +6,35 @@ import ProfileAvatar    from "../components/ProfileAvatar";
 import ProfileStats     from "../components/ProfileStats";
 import ProfileInfo      from "../components/ProfileInfo";
 import ProfileIncidents from "../components/ProfileIncidents";
+import ProfileSubscribed from "../components/ProfileSubscribed";
 
 // ─── Datos de ejemplo - Borrar al conectar el backend ─────────────────────────────────────────────────────────
 
 const sampleUser = {
-  fullName:  "Eduardo Pérez",
-  username:  "eduardo_p",
-  email:     "eduardo@arit.com",
+  fullName:  "Edwar González",
+  username:  "edwar_g",
+  email:     "edwar@arit.com",
   avatar:    null,
   createdAt: new Date("2025-09-01"),
 };
 
 // ─── Incidentes de ejemplo - Borrar al conectar el backend  ─────────────────────────────────────────────────────────
-const sampleIncidents = [
-  { id: 1,  name: "Bache en la calle",      photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",                                                                                                          priority: "Moderado", date: new Date("2026-04-13T08:00:00"), author: { username: "eduardo_p", avatar: null } },
-  { id: 2,  name: "Farola en mal estado",   photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico",  date: new Date("2026-04-10T14:00:00"), author: { username: "eduardo_p", avatar: null } },
-  { id: 3,  name: "Banco roto",             photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg",                                                                                        priority: "Leve",     date: new Date("2026-04-06T09:00:00"), author: { username: "eduardo_p", avatar: null } },
-  { id: 4,  name: "Bache en la calle",      photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",                                                                                                          priority: "Moderado", date: new Date("2026-04-13T08:00:00"), author: { username: "eduardo_p", avatar: null } },
-  { id: 5,  name: "Farola en mal estado",   photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico",  date: new Date("2026-04-10T14:00:00"), author: { username: "eduardo_p", avatar: null } },
-  { id: 6,  name: "Banco roto",             photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg",                                                                                        priority: "Leve",     date: new Date("2026-04-06T09:00:00"), author: { username: "eduardo_p", avatar: null } },
+const sampleMyIncidents = [
+  { id: 1,  name: "Bache en la calle",      photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",                                                                                                          priority: "Moderado", category: "Infraestructura", date: new Date("2026-04-13T08:00:00"), author: { username: "edwar_g", avatar: null } },
+  { id: 2,  name: "Farola en mal estado",   photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico", category: "Infraestructura",  date: new Date("2026-04-10T14:00:00"), author: { username: "edwar_g", avatar: null } },
+  { id: 3,  name: "Banco roto",             photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg",                                                                                        priority: "Leve", category: "Infraestructura",     date: new Date("2026-04-06T09:00:00"), author: { username: "edwar_g", avatar: null } },
+  { id: 4,  name: "Bache en la calle",      photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",                                                                                                          priority: "Moderado", category: "Infraestructura", date: new Date("2026-04-13T08:00:00"), author: { username: "edwar_g", avatar: null } },
+  { id: 5,  name: "Farola en mal estado",   photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico", category: "Infraestructura",  date: new Date("2026-04-10T14:00:00"), author: { username: "edwar_g", avatar: null } },
+  { id: 6,  name: "Banco roto",             photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg",                                                                                        priority: "Leve", category: "Infraestructura",     date: new Date("2026-04-06T09:00:00"), author: { username: "edwar_g", avatar: null } },
+];
+
+const sampleMySubscribed = [
+  { id: 1,  name: "Bache en la calle",        photo: "https://cordis.europa.eu/docs/news/images/2024-01/448771.jpg",         priority: "Moderado", category: "Infraestructura", date: new Date("2026-04-13T08:00:00"), author: { username: "carlos_m",  avatar: null } },
+  { id: 2,  name: "Señal de tráfico caída",   photo: "https://motor.elpais.com/wp-content/uploads/2024/08/senal-trafico-rota.jpg", priority: "Leve", category: "Infraestructura",  date: new Date("2026-04-12T10:30:00"), author: { username: "laura_g",   avatar: null } },
+  { id: 3,  name: "Acera en mal estado",      photo: "https://imagenes.segre.com/files/og_thumbnail/uploads/2025/12/30/69535736dbb2e.webp", priority: "Moderado", category: "Infraestructura", date: new Date("2026-04-13T11:00:00"), author: { username: "carlos_m",  avatar: null } },
+  { id: 4,  name: "Farola en mal estado",     photo: "https://cadenaser.com/resizer/v2/PXJFDXWSDFPCRBMK3RBF6A3BCM.jpg?auth=75e9c22036368d022e9b649be041fb5c0b9c61d816887fb49d1b88ffcfe7ac6e", priority: "Crítico", category: "Infraestructura", date: new Date("2026-04-12T22:00:00"), author: { username: "pedro_r",   avatar: null } },
+  { id: 5,  name: "Banco roto",               photo: "https://laguindilla.larioja.com/wp-content/uploads/2023/05/banco-1040x780.jpeg", priority: "Leve", category: "Infraestructura", date: new Date("2026-04-06T09:00:00"), author: { username: "laura_g",   avatar: null } },
+  { id: 6,  name: "Alcantarilla sin tapa",    photo: "https://tecolotito.elsiglodetorreon.com.mx/i/2018/11/1115854.jpeg", priority: "Crítico", category: "Infraestructura", date: new Date("2026-04-10T14:00:00"), author: { username: "ana_s",     avatar: null } }
 ];
 
 // ─── Iconos para estadísticas ─────────────────────────────────────────────────
@@ -64,6 +74,8 @@ const statsData = [
 export default function UserProfile() {
   const [user,   setUser]   = useState(sampleUser);
   const [avatar, setAvatar] = useState(null);
+  // Añade el estado en UserProfile:
+  const [activeTab, setActiveTab] = useState("reportados");
 
   const handleAvatarChange = (file) => {
     setAvatar(URL.createObjectURL(file));
@@ -100,8 +112,41 @@ export default function UserProfile() {
         {/* Información personal editable */}
         <ProfileInfo user={user} onSave={handleSave} />
 
-        {/* Incidentes reportados */}
-        <ProfileIncidents incidents={sampleIncidents} />
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+
+          {/* Tabs */}
+          <div className="flex border-b border-gray-200">
+            <button
+              onClick={() => setActiveTab("reportados")}
+              className={`flex-1 py-3 text-xs font-semibold uppercase tracking-wider transition-colors
+                ${activeTab === "reportados"
+                  ? "border-b-2 border-blue-600 text-blue-600"
+                  : "text-gray-400 hover:text-gray-600"
+                }`}
+            >
+              Mis reportados
+            </button>
+            <button
+              onClick={() => setActiveTab("suscritos")}
+              className={`flex-1 py-3 text-xs font-semibold uppercase tracking-wider transition-colors
+                ${activeTab === "suscritos"
+                  ? "border-b-2 border-blue-600 text-blue-600"
+                  : "text-gray-400 hover:text-gray-600"
+                }`}
+            >
+              Suscritos
+            </button>
+          </div>
+
+          {/* Contenido del tab activo */}
+          <div className="p-6">
+            {activeTab === "reportados"
+              ? <ProfileIncidents incidents={sampleMyIncidents} />
+              : <ProfileSubscribed incidents={sampleMySubscribed} />
+            }
+          </div>
+
+        </div>
 
       </main>
 

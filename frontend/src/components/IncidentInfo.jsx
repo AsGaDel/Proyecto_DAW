@@ -6,7 +6,7 @@ const priorityStyles = {
   Crítico:  "bg-red-700    text-red-50    bg-opacity-70",
 };
 
-export default function IncidentInfo({ name, location, description, priority, date, author }) {
+export default function IncidentInfo({ name, location, description, priority, category, date, author }) {
   const badgeClass = priorityStyles[priority] ?? "bg-black text-white bg-opacity-70";
 
   return (
@@ -19,6 +19,9 @@ export default function IncidentInfo({ name, location, description, priority, da
         </h1>
         <span className={`text-xs font-bold px-2 py-1 rounded-md ${badgeClass}`}>
           {priority}
+        </span>
+        <span className="text-gray-500 inline-block text-sm font-bold px-12 py-1">
+          {category}
         </span>
       </div>
 
