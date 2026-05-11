@@ -1,10 +1,4 @@
-import { ARITLogin } from "../components/AuthCard";
-
-export default function Login() {
-  return <ARITLogin />;
-}
-
-/* import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { ARITLogin } from "../components/AuthCard";
 
@@ -25,4 +19,4 @@ export default function Login() {
   };
 
   return <ARITLogin onSubmit={handleLogin} />;
-} */
+}

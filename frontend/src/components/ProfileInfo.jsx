@@ -26,13 +26,17 @@ export default function ProfileInfo({ user, onSave }) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSave = async () => {
-    setLoading(true);
+const handleSave = async () => {
+  setLoading(true);
+  try {
     await onSave?.(form);
-    // TODO: await userService.update(form);
-    setLoading(false);
     setEditing(false);
-  };
+  } catch (err) {
+    // Si onSave lanza un error (backend falla), mantenemos el modo edición
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleCancel = () => {
     setForm({

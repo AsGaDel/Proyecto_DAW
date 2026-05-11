@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "./ToastContainer";
 import ShareModal from "./ShareModal";
 
+import incidentService from "../services/incidentService";
 
 export default function IncidentCard({ id, name, photo, priority, status, category, date, author }) {
   const navigate = useNavigate();
@@ -45,14 +46,23 @@ export default function IncidentCard({ id, name, photo, priority, status, catego
 
         <Dropdown trigger={trigger} align="right">
           <ul>
-            <DropdownItem label="Votar" onClick={() => {toast({ message: "Has votado este incidente", type: "info" });
-                                                                // TODO: await incidentService.subscribe(incidentId);
-                                                              }} />
-            <DropdownItem label="Suscribirse" onClick={() => {toast({ message: "Te has suscrito a este incidente", type: "success" });
-                                                                // TODO: await incidentService.subscribe(incidentId);
-                                                              }} />
-            <DropdownItem label="Compartir"   onClick={() => setShareOpen(true)} />
-            {/* <DropdownItem label="Denunciar"    onClick={() => {}} danger /> */}
+            <DropdownItem label="Votar" onClick={async () => {
+              try {
+                await incidentService.vote(id);
+                toast({ message: "Has votado este incidente.", type: "info" });
+              } catch (err) {
+                toast({ message: "Error al votar.", type: "error" });
+              }
+            }} />
+            <DropdownItem label="Suscribirse" onClick={async () => {
+              try {
+                await incidentService.subscribe(id);
+                toast({ message: "Te has suscrito a este incidente.", type: "success" });
+              } catch (err) {
+                toast({ message: "Error al suscribirse.", type: "error" });
+              }
+            }} />
+            <DropdownItem label="Compartir" onClick={() => setShareOpen(true)} />
           </ul>
         </Dropdown>
       </div>

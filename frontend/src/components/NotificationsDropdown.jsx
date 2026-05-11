@@ -1,93 +1,4 @@
-import { useNavigate } from "react-router-dom";
-import { Dropdown } from "./Dropdown";
-
-// ─── Datos de ejemplo ─────────────────────────────────────────────────────────
-
-const sampleNotifications = [
-  { id: 1, text: "carlos_m ha comentado en tu incidente.",         date: new Date("2026-04-28T10:15:00"), read: false, incident: { id: 1, name: "Bache en la calle" } },
-  { id: 2, text: "Tu incidente 'Bache en la calle' ha sido resuelto.", date: new Date("2026-04-27T18:30:00"), read: false, incident: { id: 1, name: "Bache en la calle" } },
-  { id: 3, text: "laura_g ha votado tu incidente.",                 date: new Date("2026-04-27T09:00:00"), read: true, incident: { id: 1, name: "Bache en la calle" }  },
-  { id: 4, text: "Nuevo incidente en tu zona: 'Farola caída'.",     date: new Date("2026-04-26T14:20:00"), read: true, incident: { id: 1, name: "Bache en la calle" }  },
-];
-
-function timeAgo(date) {
-  const diff = Math.floor((Date.now() - date.getTime()) / 1000);
-  if (diff < 60)   return "Hace un momento";
-  if (diff < 3600) return `Hace ${Math.floor(diff / 60)} min`;
-  if (diff < 86400) return `Hace ${Math.floor(diff / 3600)} h`;
-  return `Hace ${Math.floor(diff / 86400)} días`;
-}
-
-// ─── Trigger ─────────────────────────────────────────────────────────────────
-
-function NotificationTrigger({ unreadCount }) {
-  return (
-    <div className="relative bg-transparent border border-white/15 text-white/70 hover:text-white text-xs font-medium px-3 py-1.5 rounded-lg cursor-pointer transition-colors select-none">
-      Notificaciones
-      {unreadCount > 0 && (
-        <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-gray-800">
-          {unreadCount > 9 ? "9+" : unreadCount}
-        </span>
-      )}
-    </div>
-  );
-}
-
-// ─── Componente principal ─────────────────────────────────────────────────────
-
-export default function NotificationsDropdown() {
-  const navigate    = useNavigate();
-  const unreadCount = sampleNotifications.filter((n) => !n.read).length;
-  const preview     = sampleNotifications.slice(0, 4);
-
-  return (
-    <Dropdown
-      trigger={<NotificationTrigger unreadCount={unreadCount} />}
-      align="right"
-      width="w-60 md:w-80">
-      {/* Cabecera */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <p className="text-sm font-semibold text-gray-800">Notificaciones</p>
-        {unreadCount > 0 && (
-          <span className="text-xs text-blue-600 font-medium">{unreadCount} nuevas</span>
-        )}
-      </div>
-
-      {/* Lista */}
-      <ul>
-        {preview.map((n) => (
-          <li
-            key={n.id}
-            className={`flex items-start gap-3 px-4 py-3 border-b border-gray-50 cursor-pointer hover:bg-gray-50 transition-colors
-              ${!n.read ? "bg-blue-50/50" : ""}`}>
-            {/* Punto de no leído */}
-            <div className="mt-1.5 shrink-0">
-              {!n.read
-                ? <span className="w-2 h-2 rounded-full bg-blue-500 block" />
-                : <span className="w-2 h-2 rounded-full bg-transparent block" />
-              }
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-gray-700 leading-snug">{n.text}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{timeAgo(n.date)}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
-
-      {/* Ver todas */}
-      <div className="px-4 py-3">
-        <button
-          onClick={() => navigate("/notifications")}
-          className="w-full text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-colors text-center">
-          Ver todas las notificaciones →
-        </button>
-      </div>
-    </Dropdown>
-  );
-}
-
-/* import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Dropdown } from "./Dropdown";
 
@@ -153,7 +64,7 @@ export default function NotificationsDropdown() {
       align="right"
       width="w-60 md:w-80"
     >
-      {/* Cabecera *//*}
+      {/* Cabecera */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
         <p className="text-sm font-semibold text-gray-800">Notificaciones</p>
         {unreadCount > 0 && (
@@ -161,7 +72,7 @@ export default function NotificationsDropdown() {
         )}
       </div>
 
-      {/* Lista *//*}
+      {/* Lista */}
       {loading
         ? (
           <div className="px-4 py-6 text-center">
@@ -198,7 +109,7 @@ export default function NotificationsDropdown() {
           )
       }
 
-      {/* Ver todas *//*}
+      {/* Ver todas */}
       <div className="px-4 py-3">
         <button
           onClick={() => navigate("/notificaciones")}
@@ -209,4 +120,4 @@ export default function NotificationsDropdown() {
       </div>
     </Dropdown>
   );
-} */
+}

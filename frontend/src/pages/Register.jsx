@@ -1,10 +1,4 @@
-import { ARITRegister } from "../components/AuthCard";
-
-export default function Register() {
-  return <ARITRegister />;
-}
-
-/* import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import authService from "../services/authService";
 import { ARITRegister } from "../components/AuthCard";
 
@@ -35,4 +29,4 @@ export default function Register() {
   };
 
   return <ARITRegister onSubmit={handleRegister} />;
-} */
+}

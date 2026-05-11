@@ -56,18 +56,18 @@ export default function CreateIncidentForm({ onSubmit, loading }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const updatedForm = { ...form, [name]: value };        // ← forma actualizada
+    const updatedForm = { ...form, [name]: value };      
     setForm(updatedForm);
     if (touched[name]) {
-      setErrors(validate(updatedForm));                     // ← valida con el valor actual
+      setErrors(validate(updatedForm));               
     }
   };
 
   const handleBlur = (e) => {
     const { name, value } = e.target;
-    const updatedForm = { ...form, [name]: value };        // ← forma actualizada
+    const updatedForm = { ...form, [name]: value };      
     setTouched((prev) => ({ ...prev, [name]: true }));
-    setErrors(validate(updatedForm));                       // ← valida con el valor actual
+    setErrors(validate(updatedForm));           
   };
 
   const handleSubmit = () => {
