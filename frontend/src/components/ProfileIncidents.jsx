@@ -1,10 +1,10 @@
 import CardGrid from "./CardGrid";
 
-export default function ProfileIncidents({ incidents }) {
+export default function ProfileIncidents({ incidents, otherUser = false }) {
   return (
     <div className="bg-white p-0 shadow-sm">
       <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-5">
-        Mis incidentes reportados
+        {otherUser ? "Incidentes reportados por este usuario": "Mis incidentes reportados"}
         <span className="ml-2 text-gray-400 font-normal normal-case">({incidents.length})</span>
       </h2>
 

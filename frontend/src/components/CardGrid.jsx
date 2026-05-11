@@ -8,7 +8,7 @@ export default function CardGrid({ title, incidents, isCompact = false }) {
         ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3"
         : "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6"}>
         {incidents.map((incident) => (
-          <IncidentCard key={incident.id} name={incident.name} photo={incident.photo} priority={incident.priority} category={incident.category} date={incident.date} author={incident.author}/>
+          <IncidentCard key={incident.id} id={incident.id} name={incident.name} photo={incident.photo} priority={incident.priority} status={incident.status} category={incident.category} date={incident.date} author={incident.author}/>
         ))}
       </div>
     </div>

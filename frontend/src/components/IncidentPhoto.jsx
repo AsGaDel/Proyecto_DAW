@@ -22,8 +22,8 @@ export default function IncidentPhoto({ photo, name }) {
       }
 
       {imagenActiva && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50" onClick={() => setImagenActiva(null)}>
-          <img src={imagenActiva} alt={name} className={`max-w-[90%] max-h-[90%] rounded-xl shadow-2xl transition-all duration-200 ease-out ${animar ? "scale-100 opacity-100" : "scale-50 opacity-0"}`}/>
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50" onClick={() => setImagenActiva(null)}>
+          <img src={imagenActiva} alt={name} className={`max-w-[95%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] 2xl:max-w-[50%] w-full aspect-[4/3] rounded-xl transition-all duration-200 ease-out ${animar ? "scale-100 opacity-100" : "scale-50 opacity-0"}`}/>
         </div>
       )}
 

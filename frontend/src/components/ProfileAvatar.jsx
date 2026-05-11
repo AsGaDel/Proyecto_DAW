@@ -1,7 +1,18 @@
+import { useState, useEffect } from "react";
 import { useRef } from "react";
 
 export default function ProfileAvatar({ username, avatar, onAvatarChange }) {
   const inputRef = useRef(null);
+  const [imagenActiva, setImagenActiva] = useState(null);
+  const [animar, setAnimar] = useState(false);
+
+  useEffect(() => {
+    if (imagenActiva) {
+      setTimeout(() => setAnimar(true), 10);
+    } else {
+      setAnimar(false);
+    }
+  }, [imagenActiva]);
 
   const handleFile = (e) => {
     const file = e.target.files[0];
@@ -10,17 +21,12 @@ export default function ProfileAvatar({ username, avatar, onAvatarChange }) {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <div
-        onClick={() => inputRef.current?.click()}
-        className="relative w-24 h-24 rounded-full cursor-pointer group"
-      >
+      <div onClick={() => setImagenActiva(avatar)}  className="relative w-24 h-24 rounded-full cursor-pointer group">
         {avatar
           ? <img src={avatar} alt={username} className="w-full h-full rounded-full object-cover" />
-          : (
-            <div className="w-full h-full rounded-full bg-blue-600 flex items-center justify-center text-white text-3xl font-bold">
+          : (<div className="w-full h-full rounded-full bg-blue-600 flex items-center justify-center text-white text-3xl font-bold">
               {username?.charAt(0).toUpperCase() ?? "U"}
-            </div>
-          )
+            </div>)
         }
         {/* Overlay al hacer hover */}
         <div className="absolute inset-0 rounded-full bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-200 flex items-center justify-center">
@@ -33,7 +39,14 @@ export default function ProfileAvatar({ username, avatar, onAvatarChange }) {
 
       <input ref={inputRef} type="file" accept=".png,.jpg,.jpeg" onChange={handleFile} className="hidden" />
 
-    <p className="text-xs text-gray-400">Haz clic para cambiar la foto</p>
+      <p onClick={() => inputRef.current?.click()} className="text-xs text-gray-400 hover:text-blue-500 cursor-pointer">Haz clic para cambiar la foto</p>
+
+      {imagenActiva && (
+          <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50" onClick={() => setImagenActiva(null)}>
+            <img src={imagenActiva} alt={username} className={`w-[70vw] max-w-[600px] aspect-square rounded-full object-cover transition-all duration-200 ease-out ${animar ? "scale-100 opacity-100" : "scale-50 opacity-0"}`}/>
+          </div>
+      )}
+
     </div>
   );
 }

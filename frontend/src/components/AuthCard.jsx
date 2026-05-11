@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 // ─── Iconos ──────────────────────────────────────────────────────────────────
 
@@ -18,12 +18,30 @@ function IconX() {
   );
 }
 
+// Iconos para ver/ocultar contraseña
+function IconEye() {
+  return (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+    </svg>
+  );
+}
+
+function IconEyeSlash() {
+  return (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+    </svg>
+  );
+}
+
 // ─── Estilos base de input ────────────────────────────────────────────────────
 
 const baseInputStyle = "w-full bg-gray-50 rounded-md px-4 py-3 text-sm font-medium text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition border";
 
 function inputStyle(isValid, isInvalid, showSuccess) {
-  if (isInvalid)              return `${baseInputStyle} border-red-500 focus:ring-red-400`;
+  if (isInvalid) return `${baseInputStyle} border-red-500 focus:ring-red-400`;
   if (isValid && showSuccess) return `${baseInputStyle} border-green-500 focus:ring-green-400`;
   return `${baseInputStyle} border-gray-200 focus:ring-blue-600`;
 }
@@ -31,14 +49,24 @@ function inputStyle(isValid, isInvalid, showSuccess) {
 // ─── Componente base reutilizable ────────────────────────────────────────────
 
 function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, footerLinkHref, onSubmit, serverErrors, showIcons = false }) {
-  const initialState   = Object.fromEntries(fields.map((f) => [f.name, ""]));
+  const initialState = Object.fromEntries(fields.map((f) => [f.name, ""]));
   const initialTouched = Object.fromEntries(fields.map((f) => [f.name, false]));
-  const initialErrors  = Object.fromEntries(fields.map((f) => [f.name, ""]));
+  const initialErrors = Object.fromEntries(fields.map((f) => [f.name, ""]));
 
-  const [form,    setForm]    = useState(initialState);
+  const [form, setForm] = useState(initialState);
   const [touched, setTouched] = useState(initialTouched);
-  const [errors,  setErrors]  = useState(initialErrors);
+  const [errors, setErrors] = useState(initialErrors);
   const [loading, setLoading] = useState(false);
+  
+  // Estado para controlar la visibilidad de los campos tipo password
+  const [showPasswords, setShowPasswords] = useState({});
+
+  const togglePasswordVisibility = (fieldName) => {
+    setShowPasswords(prev => ({
+      ...prev,
+      [fieldName]: !prev[fieldName]
+    }));
+  };
 
   const validateField = (field, value) => {
     if (field.validate) return field.validate(value, form);
@@ -63,7 +91,7 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
 
   const handleSubmit = () => {
     const allTouched = Object.fromEntries(fields.map((f) => [f.name, true]));
-    const allErrors  = Object.fromEntries(fields.map((f) => [f.name, validateField(f, form[f.name])]));
+    const allErrors = Object.fromEntries(fields.map((f) => [f.name, validateField(f, form[f.name])]));
     setTouched(allTouched);
     setErrors(allErrors);
 
@@ -71,17 +99,16 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
     if (hasErrors) return;
 
     setLoading(true);
+    // Nota: El redireccionamiento debería ocurrir dentro de la respuesta exitosa en onSubmit
     onSubmit?.(form, () => setLoading(false));
-
-    window.location = "/dashboard";
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 font-sans">
       <div className="bg-white rounded-lg p-8 w-full max-w-md shadow-sm">
 
         {/* Header */}
-        <div className="bg-gray-50 border border-gray-100  rounded-md px-6 py-4 text-center mb-8 shadow-sm">
+        <div className="bg-gray-50 border border-gray-100 rounded-md px-6 py-4 text-center mb-8 shadow-sm">
           <h1 className="text-2xl font-black tracking-widest text-blue-600">ARIT</h1>
           <p className="text-gray-600 text-sm mt-1">{title}</p>
         </div>
@@ -91,30 +118,44 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
           {fields.map((field) => {
             const { name, label, type, placeholder } = field;
             const isTouched = touched[name];
-            const error     = errors[name] || serverErrors?.[name];
-            const isValid   = isTouched && !error;
+            const error = errors[name] || serverErrors?.[name];
+            const isValid = isTouched && !error;
             const isInvalid = isTouched && !!error;
+            
+            // Lógica de visibilidad
+            const isPasswordField = type === "password";
+            const isVisible = showPasswords[name];
+            const inputType = isPasswordField ? (isVisible ? "text" : "password") : type;
 
             return (
               <div key={name}>
-                {/* Label + icono (solo si showIcons=true) */}
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   {label}
                   {showIcons && (isInvalid ? <IconX /> : isValid ? <IconCheck /> : null)}
                 </label>
 
-                {/* Input con estilos calculados dinámicamente aquí, no en el array */}
-                <input
-                  type={type}
-                  name={name}
-                  value={form[name]}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  placeholder={placeholder}
-                  className={inputStyle(isValid, isInvalid, showIcons)}
-                />
+                <div className="relative">
+                  <input
+                    type={inputType}
+                    name={name}
+                    value={form[name]}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder={placeholder}
+                    className={`${inputStyle(isValid, isInvalid, showIcons)} ${isPasswordField ? "pr-11" : ""}`}
+                  />
+                  
+                  {isPasswordField && form[name].length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => togglePasswordVisibility(name)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-600 transition-colors"
+                    >
+                      {isVisible ? <IconEyeSlash /> : <IconEye />}
+                    </button>
+                  )}
+                </div>
 
-                {/* Mensaje de error */}
                 {isInvalid && (
                   <p className="mt-1 text-xs text-red-500">{error}</p>
                 )}
@@ -134,7 +175,8 @@ function ARITAuthCard({ title, fields, submitLabel, footerText, footerLinkText, 
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60 text-white font-semibold text-lg py-3 rounded-md transition-colors duration-300  cursor-pointer">
+            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60 text-white font-semibold text-lg py-3 rounded-md transition-colors duration-300 cursor-pointer"
+          >
             {loading ? "Cargando..." : submitLabel}
           </button>
         </div>
@@ -152,20 +194,14 @@ const loginFields = [
     label: "Nombre de usuario",
     type: "text",
     placeholder: "Introduce tu nombre de usuario",
-    validate: (value) => {
-      if (!value.trim()) return "El nombre de usuario no puede estar vacío.";
-      return "";
-    },
+    validate: (value) => (!value.trim() ? "El nombre de usuario no puede estar vacío." : ""),
   },
   {
     name: "password",
     label: "Contraseña",
     type: "password",
     placeholder: "Introduce tu contraseña",
-    validate: (value) => {
-      if (!value) return "La contraseña no puede estar vacía.";
-      return "";
-    },
+    validate: (value) => (!value ? "La contraseña no puede estar vacía." : ""),
   },
 ];
 
@@ -183,12 +219,11 @@ export function ARITLogin() {
       serverErrors={serverErrors}
       showIcons={false}
       onSubmit={(data, done) => {
-        // TODO: authService.login(data)
-        //   .then(() => navigate("/dashboard"))
-        //   .catch((err) => setServerErrors({ password: err.message }))
-        //   .finally(done);
-        console.log("Login:", data);
-        setTimeout(done, 1000);
+        console.log("Login Payload:", data);
+        setTimeout(() => {
+          done();
+          window.location.href = "/dashboard";
+        }, 1000);
       }}
     />
   );
@@ -271,12 +306,11 @@ export function ARITRegister() {
       serverErrors={serverErrors}
       showIcons={true}
       onSubmit={(data, done) => {
-        // TODO: authService.register(data)
-        //   .then(() => navigate("/login"))
-        //   .catch((err) => setServerErrors({ username: err.message }))
-        //   .finally(done);
-        console.log("Register:", data);
-        setTimeout(done, 1000);
+        console.log("Register Payload:", data);
+        setTimeout(() => {
+          done();
+          window.location.href = "/login";
+        }, 1000);
       }}
     />
   );

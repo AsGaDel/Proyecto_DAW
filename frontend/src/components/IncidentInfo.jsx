@@ -6,7 +6,7 @@ const priorityStyles = {
   Crítico:  "bg-red-700    text-red-50    bg-opacity-70",
 };
 
-export default function IncidentInfo({ name, location, description, priority, category, date, author }) {
+export default function IncidentInfo({ name, location, description, priority, status, category, date, author }) {
   const badgeClass = priorityStyles[priority] ?? "bg-black text-white bg-opacity-70";
 
   return (
@@ -20,7 +20,15 @@ export default function IncidentInfo({ name, location, description, priority, ca
         <span className={`text-xs font-bold px-2 py-1 rounded-md ${badgeClass}`}>
           {priority}
         </span>
-        <span className="text-gray-500 inline-block text-sm font-bold px-12 py-1">
+        {status === "Pendiente"
+          ? <span className="text-slate-500 inline-block text-sm font-semibold px-4 lg:px-12 py-1">{status}</span>
+          : status === "En proceso"
+          ? <span className="text-orange-500 inline-block text-sm font-semibold px-4 lg:px-12 py-1">{status}</span>
+          : status === "Finalizado"
+          ? <span className="text-teal-500 inline-block text-sm font-semibold px-4 lg:px-12 py-1">{status}</span>
+          : <span className="text-black inline-block text-sm font-semibold px-4 lg:px-12 py-1">{status}</span>
+        }
+        <span className="text-gray-500 inline-block text-sm font-bold px-4 lg:px-12 py-1">
           {category}
         </span>
       </div>

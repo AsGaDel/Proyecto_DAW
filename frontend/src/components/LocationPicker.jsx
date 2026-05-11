@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from "react-leaflet";
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
-// Fix del icono por defecto de Leaflet que se rompe con Vite
+// Fix del icono por defecto de Leaflet para Vite
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon   from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
@@ -14,7 +15,15 @@ L.Icon.Default.mergeOptions({
   shadowUrl:     markerShadow,
 });
 
-// ─── Componente interno que escucha clicks en el mapa ────────────────────────
+// ─── Componentes del Mapa ──────────────────────────────────────────────────
+
+function ChangeView({ center }) {
+  const map = useMap();
+  useEffect(() => {
+    if (center) map.setView(center, 16);
+  }, [center, map]);
+  return null;
+}
 
 function MapClickHandler({ onLocationSelect }) {
   useMapEvents({
@@ -25,19 +34,18 @@ function MapClickHandler({ onLocationSelect }) {
   return null;
 }
 
-// ─── Componente principal ─────────────────────────────────────────────────────
+// ─── Componente Principal ─────────────────────────────────────────────────────
 
 export default function LocationPicker({ value, onChange }) {
-    // Posición inicial del mapa: Santa Cruz de Tenerife por defecto
   const defaultCenter = [28.4636, -16.2518];
 
-  const [open,    setOpen]    = useState(false);
-  const [marker,  setMarker]  = useState(value?.latlng ?? null);
+  const [open,   setOpen]    = useState(false);
+  const [marker, setMarker]  = useState(value?.latlng ?? null);
   const [address, setAddress] = useState(value?.address ?? "");
-  const [loading, setLoading] = useState(false);
-  const [mapCenter, setMapCenter] = useState(defaultCenter);
+  const [loading, setLoading] = useState(false); // Para geocodificación
+  const [isLocating, setIsLocating] = useState(false); // Para GPS inicial
+  const [mapCenter, setMapCenter] = useState(value?.latlng ?? defaultCenter);
 
-  // Geocodificación inversa con Nominatim (OpenStreetMap, gratuito, sin API key)
   const reverseGeocode = async (latlng) => {
     setLoading(true);
     try {
@@ -71,28 +79,36 @@ export default function LocationPicker({ value, onChange }) {
     onChange(null);
   };
 
-
   const handleOpen = () => {
-  setOpen(true);
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setMapCenter([pos.coords.latitude, pos.coords.longitude]);
-      },
-      () => {
-        // Si el usuario deniega el permiso o falla, se queda con defaultCenter
-        setMapCenter(defaultCenter);
-      }
-    );
-  }
-};
+    setOpen(true);
+    
+    // Si ya hay un marcador, no forzamos geolocalización automática
+    if (marker) return;
 
-
-
+    if (navigator.geolocation) {
+      setIsLocating(true);
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          setMapCenter([coords.lat, coords.lng]);
+          
+          // Seteamos marcador y buscamos dirección antes de mostrar el mapa
+          setMarker(coords);
+          const addr = await reverseGeocode(coords);
+          setAddress(addr);
+          setIsLocating(false);
+        },
+        () => {
+          setIsLocating(false); // Error de GPS: muestra mapa en defaultCenter
+        },
+        { enableHighAccuracy: true, timeout: 6000 }
+      );
+    }
+  };
 
   return (
     <div>
-      {/* Campo de ubicación */}
+      {/* Campo de ubicación (Estilo Original) */}
       <div
         onClick={handleOpen}
         className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 text-sm cursor-pointer flex items-center gap-2 hover:border-blue-400 transition-colors"
@@ -117,7 +133,7 @@ export default function LocationPicker({ value, onChange }) {
         )}
       </div>
 
-      {/* Modal con el mapa */}
+      {/* Modal con el mapa (Estilo Original) */}
       {open && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/50">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl flex flex-col overflow-hidden">
@@ -129,7 +145,7 @@ export default function LocationPicker({ value, onChange }) {
                 <p className="text-xs text-gray-400 mt-0.5">Haz clic en el mapa para marcar el incidente</p>
               </div>
               <button
-                onClick={() => setOpen(false)}
+                onClick={(e) => { e.stopPropagation(); handleClear(); setOpen(false); }}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -138,24 +154,31 @@ export default function LocationPicker({ value, onChange }) {
               </button>
             </div>
 
-            {/* Mapa */}
-            <div className="h-96 w-full">
-              <MapContainer
-                center={marker ? [marker.lat, marker.lng] : mapCenter}
-                zoom={13}
-                key={open ? "open" : "closed"}
-                style={{ height: "100%", width: "100%" }}
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <MapClickHandler onLocationSelect={handleLocationSelect} />
-                {marker && <Marker position={marker} />}
-              </MapContainer>
+            {/* Cuerpo del Mapa / Pantalla de Carga */}
+            <div className="h-96 w-full flex items-center justify-center bg-gray-50 relative">
+              {isLocating ? (
+                <div className="flex flex-col items-center">
+                  <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-2"></div>
+                  <p className="text-xs text-gray-500">Obteniendo ubicación...</p>
+                </div>
+              ) : (
+                <MapContainer
+                  center={mapCenter}
+                  zoom={16}
+                  style={{ height: "100%", width: "100%" }}
+                >
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <ChangeView center={mapCenter} />
+                  <MapClickHandler onLocationSelect={handleLocationSelect} />
+                  {marker && <Marker position={marker} />}
+                </MapContainer>
+              )}
             </div>
 
-            {/* Dirección detectada + botón confirmar */}
+            {/* Dirección detectada + botón confirmar (Estilo Original) */}
             <div className="px-5 py-4 border-t border-gray-200 flex items-center gap-3">
               <div className="flex-1 min-w-0">
                 {loading

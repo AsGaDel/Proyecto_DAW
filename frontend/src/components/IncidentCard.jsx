@@ -5,7 +5,7 @@ import { useToast } from "./ToastContainer";
 import ShareModal from "./ShareModal";
 
 
-export default function IncidentCard({ name, photo, priority, category, date, author }) {
+export default function IncidentCard({ id, name, photo, priority, status, category, date, author }) {
   const navigate = useNavigate();
   const toast = useToast();
   const [shareOpen, setShareOpen] = useState(false);
@@ -23,13 +23,13 @@ export default function IncidentCard({ name, photo, priority, category, date, au
   );
 
   return (
-    <div  onClick={() => {navigate("/incident-details")}} className="bg-white border border-gray-100 shadow-sm 
-      rounded-lg overflow-hidden lg:hover:border-gray-300 duration-200 active:scale-[0.99] lg:active:border-blue-400 transition-all 
+    <div  onClick={() => navigate(`/incidente/${id}`)} className="bg-white border border-gray-100 shadow-sm 
+      rounded-lg overflow-hidden lg:hover:shadow-md lg:hover:border-gray-300 duration-200 active:scale-[0.99] lg:active:border-blue-400 transition-all 
       cursor-pointer group">
 
       {/* Cabecera: autor + opciones */}
       <div className="bg-white px-3 py-2 flex items-center justify-between border-b border-gray-100">
-        <div className="flex items-center gap-2">
+        <div onClick={(e) => { e.stopPropagation(); navigate(`/profile/${username}`); }} className="flex items-center gap-2">
           {avatar
             ? <img src={avatar} alt={username} className="w-7 h-7 rounded-full object-cover" />
             : (
@@ -38,7 +38,9 @@ export default function IncidentCard({ name, photo, priority, category, date, au
               </div>
             )
           }
-          <span className="text-xs font-medium text-gray-600">{username}</span>
+          <span className="text-xs font-medium text-gray-600 hover:text-blue-600 hover:underline cursor-pointer transition-colors">
+            {username}
+          </span>
         </div>
 
         <Dropdown trigger={trigger} align="right">
@@ -46,11 +48,11 @@ export default function IncidentCard({ name, photo, priority, category, date, au
             <DropdownItem label="Votar" onClick={() => {toast({ message: "Has votado este incidente", type: "info" });
                                                                 // TODO: await incidentService.subscribe(incidentId);
                                                               }} />
-            <DropdownItem label="Suscribirse" onClick={() => {toast({ message: "Suscrito a este incidente", type: "success" });
+            <DropdownItem label="Suscribirse" onClick={() => {toast({ message: "Te has suscrito a este incidente", type: "success" });
                                                                 // TODO: await incidentService.subscribe(incidentId);
                                                               }} />
             <DropdownItem label="Compartir"   onClick={() => setShareOpen(true)} />
-            <DropdownItem label="Denunciar"    onClick={() => {}} danger />
+            {/* <DropdownItem label="Denunciar"    onClick={() => {}} danger /> */}
           </ul>
         </Dropdown>
       </div>
@@ -66,24 +68,37 @@ export default function IncidentCard({ name, photo, priority, category, date, au
       {/* Info */}
       <div className="bg-white px-4 py-4">
         <div className="flex flex-row justify-between">
+
           {priority === "Leve"
-            ? <span className="bg-green-800  text-green-50  bg-opacity-80 inline-block text-sm font-bold px-1 rounded-md mb-2">{priority}</span>
+            ? <span className="bg-green-700  text-green-50  bg-opacity-80 inline-block text-sm font-bold px-1 rounded-md mb-2 mr-1">{priority}</span>
             : priority === "Moderado"
-            ? <span className="bg-yellow-800 text-yellow-50 opacity-80     inline-block text-sm font-bold px-1 rounded-md mb-2">{priority}</span>
+            ? <span className="bg-yellow-600 text-yellow-50 opacity-80     inline-block text-sm font-bold px-1 rounded-md mb-2 mr-1">{priority}</span>
             : priority === "Crítico"
-            ? <span className="bg-red-800    text-red-50    bg-opacity-80 inline-block text-sm font-bold px-1 rounded-md mb-2">{priority}</span>
-            : <span className="bg-black      text-red-50    bg-opacity-80 inline-block text-sm font-bold px-1 rounded-md mb-2">{priority}</span>
+            ? <span className="bg-red-700    text-red-50    bg-opacity-80 inline-block text-sm font-bold px-1 rounded-md mb-2 mr-1">{priority}</span>
+            : <span className="bg-black      text-red-50    bg-opacity-80 inline-block text-sm font-bold px-1 rounded-md mb-2 mr-1">{priority}</span>
           }
           <span className="text-gray-500 inline-block text-sm font-bold  mb-2">{category}</span>
+
         </div>
         
-        <div className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">{name}</div>
+        <div>
+          <span className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">{name}</span>
+          <span> - </span>
+          {status === "Pendiente"
+            ? <span className="text-slate-500 inline-block text-xs  mb-2 ml-1">{status}</span>
+            : status === "En proceso"
+            ? <span className="text-orange-500 inline-block text-xs  mb-2 ml-1">{status}</span>
+            : status === "Finalizado"
+            ? <span className="text-teal-500 inline-block text-xs mb-2 ml-1">{status}</span>
+            : <span className="text-black inline-block text-xs  mb-2 ml-1">{status}</span>
+          }
+          </div>
         <div className="text-xs font-medium text-gray-700 tracking-wide">{new Intl.DateTimeFormat("es-ES", { dateStyle: "medium", timeStyle: "short" }).format(date)}</div>
       </div>
 
           {shareOpen && (
             <ShareModal
-              url="{`${window.location.origin}/incident-details/${id}`}"
+              url={`${window.location.origin}/incidente/${id}`}
               onClose={(e) => { e?.stopPropagation(); setShareOpen(false); }}
             />
           )}

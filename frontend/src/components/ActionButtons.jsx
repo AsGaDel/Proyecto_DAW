@@ -9,25 +9,21 @@ export default function ActionButtons({ actions = [] }) {
         <div className="font-bold text-gray-500 uppercase text-md m-3 hidden overflow-hidden lg:inline">
           Acciones
         </div>
-      {actions.map(({ label, svg, onClick, href }) => {
-        const isActive = href && pathname === href;
-        return (
-          <button
-            key={label}
-            onClick={onClick}
-            title={label}
-            className={`flex flex-1 min-w-0 truncate items-center justify-center lg:justify-start gap-2 lg:border border-gray-100 lg:shadow-sm w-full px-3 py-5 rounded-lg transition-colors duration-200 leading-tight uppercase lg:font-bold lg:text-sm
+        {actions.map(({ label, svg, onClick, href }) => {
+          const isActive = href && pathname === href;
+          return (
+            <button key={label} onClick={onClick} title={label} className={`flex flex-1 min-w-0 truncate items-center justify-center lg:justify-start gap-2 
+              lg:shadow-sm w-full px-3 py-5 rounded-lg transition-all duration-200 leading-tight uppercase lg:font-bold lg:text-sm
                 ${isActive
                   ? "text-blue-500 bg-blue-50 border border-blue-300"
-                  : "bg-white text-gray-600 lg:hover:bg-gray-00 lg:hover:text-blue-500"
+                  : "text-gray-600 bg-white lg:border border-gray-100 lg:hover:text-blue-500 lg:hover:shadow-blue-200 lg:hover:border-gray-200"
                 }`
-            }
-          >
-            <div>{svg}</div>
-            {<span className="hidden lg:inline truncate">{label}</span>}
-          </button>
-        );
-      })}
+              }>
+              <div>{svg}</div>
+              {<span className="hidden lg:inline truncate">{label}</span>}
+            </button>
+          );
+        })}
     </div>
   );
 }

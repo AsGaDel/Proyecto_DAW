@@ -21,9 +21,9 @@ export default function Footer() {
  
         {/* Centro: links */}
         <nav className="flex items-center gap-5">
-          <a href="#" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Aviso legal</a>
-          <a href="#" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Privacidad</a>
-          <a href="#" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Contacto</a>
+          <a href="/aviso-legal" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Aviso legal</a>
+          <a href="/privacidad" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Privacidad</a>
+          <a href="/contacto" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Contacto</a>
         </nav>
  
         {/* Derecha: copyright */}
