@@ -38,14 +38,27 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer para que el usuario vea y edite su propio perfil."""
-    # Incluir el perfil anidado permite leer y actualizar ambos modelos en una sola petición
     profile = UserProfileSerializer()
+    # Estadísticas de actividad del usuario, usadas en la página de perfil
+    stats   = serializers.SerializerMethodField()
 
     class Meta:
         model  = User
-        fields = ['id', 'username', 'email', 'full_name', 'role', 'is_active', 'date_joined', 'profile']
-        # role e is_active solo los puede cambiar un admin mediante AdminUserSerializer
-        read_only_fields = ['id', 'role', 'is_active', 'date_joined']
+        fields = ['id', 'username', 'email', 'full_name', 'role', 'is_active', 'date_joined', 'profile', 'stats']
+        read_only_fields = ['id', 'role', 'is_active', 'date_joined', 'stats']
+
+    def get_stats(self, obj):
+        reported      = obj.reported_incidents.filter(deleted_at__isnull=True).count()
+        votes_received = sum(
+            inc.vote_count
+            for inc in obj.reported_incidents.filter(deleted_at__isnull=True).only('vote_count')
+        )
+        subscriptions = obj.subscriptions.count()
+        return {
+            'reported':       reported,
+            'votes_received': votes_received,
+            'subscriptions':  subscriptions,
+        }
 
     def update(self, instance, validated_data):
         # Extraer los datos del perfil antes de actualizar el usuario
