@@ -10,9 +10,15 @@ class Incident(models.Model):
         DELETED     = 'deleted',     'Eliminado'
 
     class Priority(models.TextChoices):
-        LOW    = 'low',    'Leve'
-        MEDIUM = 'medium', 'Moderado'
-        HIGH   = 'high',   'Crítico'
+        LOW    = 'Leve',     'Leve'
+        MEDIUM = 'Moderado', 'Moderado'
+        HIGH   = 'Crítico',  'Crítico'
+
+    class Category(models.TextChoices):
+        CONNECTIVITY  = 'Red / Conectividad',   'Red / Conectividad'
+        ELECTRICITY   = 'Suministro eléctrico', 'Suministro eléctrico'
+        INFRASTRUCTURE = 'Infraestructura',     'Infraestructura'
+        OTHER         = 'Otro',                 'Otro'
 
     title       = models.CharField(max_length=200)
     description = models.TextField()
@@ -22,7 +28,8 @@ class Incident(models.Model):
         related_name='reported_incidents',
     )
     status    = models.CharField(max_length=15, choices=Status.choices, default=Status.PENDING)
-    priority  = models.CharField(max_length=10, choices=Priority.choices, default=Priority.LOW)
+    priority  = models.CharField(max_length=20, choices=Priority.choices, default=Priority.LOW)
+    category  = models.CharField(max_length=25, choices=Category.choices, default=Category.OTHER)
     latitude  = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     address   = models.CharField(max_length=255, blank=True)

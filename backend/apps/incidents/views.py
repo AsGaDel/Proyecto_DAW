@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.utils.timezone import now
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
@@ -109,6 +110,17 @@ class IncidentViewSet(viewsets.ModelViewSet):
             sub.delete()
             return Response({'subscribed': False})
         return Response({'subscribed': True}, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['get'], url_path='stats')
+    def stats(self, request):
+        """GET /api/incidents/stats/ — contadores para el dashboard."""
+        month_start = now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        active_statuses = [Incident.Status.PENDING, Incident.Status.IN_PROGRESS]
+        return Response({
+            'active':              Incident.objects.filter(status__in=active_statuses, deleted_at__isnull=True).count(),
+            'pending_review':      Incident.objects.filter(status=Incident.Status.PENDING, deleted_at__isnull=True).count(),
+            'resolved_this_month': Incident.objects.filter(status=Incident.Status.RESOLVED, updated_at__gte=month_start).count(),
+        })
 
     @action(detail=True, methods=['post'], url_path='photos', serializer_class=IncidentPhotoSerializer)
     def photos(self, request, pk=None):

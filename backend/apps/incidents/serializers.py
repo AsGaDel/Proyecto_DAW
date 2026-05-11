@@ -26,7 +26,7 @@ class IncidentSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'description',
             'reporter', 'reporter_email', 'reporter_username',
-            'status', 'priority',
+            'status', 'priority', 'category',
             'latitude', 'longitude', 'address', 'location',
             'vote_count', 'is_voted', 'is_subscribed',
             'created_at', 'updated_at',
