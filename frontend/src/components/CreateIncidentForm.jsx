@@ -1,18 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ImageUploader from "./ImageUploader";
 import { useNavigate } from "react-router-dom";
 import LocationPicker from "./LocationPicker";
+
+import categoryService from "../services/categoryService";
 
 // ─── Validadores ──────────────────────────────────────────────────────────────
 
 function validate(form) {
   const errors = {};
-  if (!form.photo)              errors.photo       = "La imagen es obligatoria.";
-  if (!form.title.trim())       errors.title       = "El título no puede estar vacío.";
-  if (!form.location)           errors.location    = "Selecciona una ubicación en el mapa.";
-  if (!form.description.trim()) errors.description = "La descripción no puede estar vacía.";
-  if (!form.category)           errors.category    = "Selecciona una categoría.";
-  if (!form.priority)           errors.priority    = "Selecciona un nivel de prioridad.";
+  if (!form.photo) errors.photo = "La imagen es obligatoria.";
+
+  if (!form.title.trim()) {
+    errors.title = "El título no puede estar vacío.";
+  } else if (form.title.trim().length < 3) {
+    errors.title = "El título debe tener al menos 3 caracteres.";
+  } else if (form.title.trim().length > 30) {
+    errors.title = "El título no puede superar los 30 caracteres.";
+  }
+
+  if (!form.location) errors.location = "Selecciona una ubicación en el mapa.";
+
+  if (!form.description.trim()) {
+    errors.description = "La descripción no puede estar vacía.";
+  } else if (form.description.trim().length < 5) {
+    errors.description = "La descripción debe tener al menos 5 caracteres.";
+  } else if (form.description.trim().length > 200) {
+    errors.description = "La descripción no puede superar los 200 caracteres.";
+  }
+
+  if (!form.category) errors.category = "Selecciona una categoría.";
+  if (!form.priority) errors.priority = "Selecciona un nivel de prioridad.";
   return errors;
 }
 
@@ -37,7 +55,6 @@ function Field({ label, error, children }) {
   );
 }
 
-const categorias = ["Red / Conectividad", "Suministro eléctrico", "Infraestructura", "Otro"];
 const prioridades = [
   { value: "Leve",     color: "bg-green-700  text-green-50"  },
   { value: "Moderado", color: "bg-yellow-600 text-yellow-50" },
@@ -53,6 +70,13 @@ export default function CreateIncidentForm({ onSubmit, loading }) {
   });
   const [errors,  setErrors]  = useState({});
   const [touched, setTouched] = useState({});
+
+  const [categorias, setCategorias] = useState([]);
+  useEffect(() => {
+    categoryService.getAll()
+      .then((data) => setCategorias(data))
+      .catch((err) => console.error("Error al cargar categorías:", err));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -134,7 +158,7 @@ export default function CreateIncidentForm({ onSubmit, loading }) {
               className={inputClass(touched.category, errors.category)}
             >
               <option value="">Selecciona</option>
-              {categorias.map((c) => <option key={c} value={c}>{c}</option>)}
+              {categorias.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
             </select>
           </Field>
 

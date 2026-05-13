@@ -34,7 +34,7 @@ export default function AssignedIncidentRow({ incident, onStatusChange }) {
     <div className="bg-white border border-gray-200 rounded-xl px-4 py-4 shadow-sm hover:border-gray-300 transition-all duration-150 flex flex-col sm:flex-row sm:items-center gap-4">
 
       {/* Foto */}
-      <div className="w-full sm:w-20 h-32 sm:h-14 rounded-lg overflow-hidden bg-gray-200 shrink-0 cursor-pointer" onClick={() => navigate(`/incidente/${incident.id}`)}>
+      <div className="w-full sm:w-20 h-32 sm:h-14 rounded-lg overflow-hidden bg-gray-200 shrink-0 cursor-pointer" onClick={() => navigate(`/incident/${incident.id}`)}>
         {incident.photo
           ? <img src={incident.photo} alt={incident.name} className="w-full h-full object-cover" />
           : <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">Sin foto</div>
@@ -42,7 +42,7 @@ export default function AssignedIncidentRow({ incident, onStatusChange }) {
       </div>
 
       {/* Info */}
-      <div className="flex-1 min-w-0 cursor-pointer" onClick={() => navigate(`/incidente/${incident.id}`)}>
+      <div className="flex-1 min-w-0 cursor-pointer" onClick={() => navigate(`/incident/${incident.id}`)}>
         <div className="flex items-center gap-2 flex-wrap mb-1">
           <p className="text-sm font-bold text-gray-800 truncate">{incident.name}</p>
           <span className={`text-xs font-bold px-1.5 py-0.5 rounded-md ${priorityStyles[incident.priority] ?? "bg-gray-200 text-gray-600"}`}>

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+import { usePageTitle } from "../hooks/usePageTitle";
+
 import { userActions, adminActions, workerActions, getActionsByRole } from "../data/actionButtons";
 
 import Navbar              from "../components/Navbar";
@@ -13,6 +15,7 @@ import incidentService from "../services/incidentService";
 import { useToast }    from "../components/ToastContainer";
 
 export default function AssignedList() {
+  usePageTitle("Asignados");
   const navigate  = useNavigate();
   const { user }  = useAuth();
   const toast     = useToast();
@@ -133,7 +136,7 @@ export default function AssignedList() {
         <aside className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t px-4 py-1
           lg:sticky lg:top-14 lg:self-start lg:h-fit lg:border-t-0 lg:border-l-0 lg:w-56 lg:shrink-0 lg:px-0 lg:py-6 lg:order-last
           xl:w-64 lg:bg-transparent">
-          <ActionButtons actions={totalActions} />
+          <ActionButtons actions={actions} />
         </aside>
 
       </main>

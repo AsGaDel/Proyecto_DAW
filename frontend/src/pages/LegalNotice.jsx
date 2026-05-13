@@ -1,6 +1,8 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
+import { usePageTitle } from "../hooks/usePageTitle";
+
 function Section({ title, children }) {
   return (
     <div className="mb-8">
@@ -15,6 +17,7 @@ function Section({ title, children }) {
 }
 
 export default function LegalNotice() {
+  usePageTitle("Aviso Legal");
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <Navbar appName="ARIT" />

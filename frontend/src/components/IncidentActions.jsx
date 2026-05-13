@@ -18,9 +18,14 @@ export default function IncidentActions({ incidentId, initialVoted = false, init
     setLoading(true);
     try {
       await incidentService.vote(incidentId);
+      const newVoted = !voted;
       setVoted((prev) => {
         setVotes((v) => prev ? v - 1 : v + 1);
         return !prev;
+      });
+      toast({
+        message: newVoted ? "Has votado este incidente." : "Voto eliminado.",
+        type: "info",
       });
     } catch (err) {
       toast({ message: "Error al registrar el voto.", type: "error" });
@@ -66,9 +71,9 @@ export default function IncidentActions({ incidentId, initialVoted = false, init
         <svg className="w-6 h-6" fill={voted ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
         </svg>
-        {votes > 0
-          ? <span className="ml-0.5 text-xs font-bold">({votes})</span>
-          : "Votar"
+        {voted
+          ? <span className="ml-0.5 text-xs font-bold">Votado: ({votes})</span>
+          : <span className="ml-0.5 text-xs font-bold">Votar: ({votes})</span>
         }
       </button>
 
@@ -109,7 +114,7 @@ export default function IncidentActions({ incidentId, initialVoted = false, init
 
       {shareOpen && (
         <ShareModal
-          url={`${window.location.origin}/incidente/${incidentId}`}
+          url={`${window.location.origin}/incident/${incidentId}`}
           onClose={(e) => { e?.stopPropagation(); setShareOpen(false); }}
         />
       )}

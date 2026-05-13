@@ -26,7 +26,6 @@ export default function ImageUploader({ value, onChange }) {
 
     onChange(file);
     setPreview(URL.createObjectURL(file));
-    console.log("Archivo seleccionado:", file);
   };
 
   const handleInputChange = (e) => handleFile(e.target.files[0]);

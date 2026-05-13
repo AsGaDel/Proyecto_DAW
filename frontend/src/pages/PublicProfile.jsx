@@ -1,6 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
+import { usePageTitle } from "../hooks/usePageTitle";
+
 import Navbar           from "../components/Navbar";
 import Footer           from "../components/Footer";
 import ProfileStats     from "../components/ProfileStats";
@@ -8,7 +10,6 @@ import ProfileIncidents from "../components/ProfileIncidents";
 
 import userService     from "../services/userService";
 import incidentService from "../services/incidentService";
-import statsService    from "../services/statsService";
 
 // ─── Iconos para estadísticas ─────────────────────────────────────────────────
 
@@ -41,15 +42,15 @@ export default function PublicProfile() {
   const [statsData, setStatsData] = useState([]);
   const [loading,   setLoading]   = useState(true);
   const [error,     setError]     = useState(null);
+  usePageTitle("Usuario: " + user?.username);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [userData, incidentsData, stats] = await Promise.all([
+        const [userData, incidentsData] = await Promise.all([
           userService.getByUsername(username),
           incidentService.getAll({ author: username }),
-          statsService.getByUser(username),
         ]);
 
         setUser(userData);
@@ -60,9 +61,8 @@ export default function PublicProfile() {
         })));
 
         setStatsData([
-          { label: "Reportados",      value: stats.reportados ?? incidentsData.length, icon: statIcons.reportados },
-          { label: "Votos recibidos", value: stats.votos      ?? 0,                    icon: statIcons.votos      },
-          { label: "Suscritos",       value: stats.suscritos  ?? 0,                    icon: statIcons.suscritos  },
+          { label: "Reportados",      value: incidentsData.length, icon: statIcons.reportados },
+          { label: "Votos recibidos", value: incidentsData.reduce((acc, inc) => acc + (inc.votes ?? 0), 0), icon: statIcons.votos },
         ]);
       } catch (err) {
         setError("Usuario no encontrado.");
@@ -128,7 +128,7 @@ export default function PublicProfile() {
               </h1>
               <p className="text-sm text-gray-400">@{user.username}</p>
             </div>
-            <ProfileStats stats={statsData} />
+            <ProfileStats stats={statsData} cols={2} />
           </div>
 
         </div>

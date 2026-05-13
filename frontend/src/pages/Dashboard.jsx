@@ -11,9 +11,11 @@ import StatGrid      from "../components/StatGrid";
 import Footer        from "../components/Footer";
 
 import incidentService from "../services/incidentService";
-import statsService    from "../services/statsService";
+
+import { usePageTitle } from "../hooks/usePageTitle";
 
 export default function Dashboard() {
+  usePageTitle("Inicio");
   const navigate   = useNavigate();
   const { user }   = useAuth();
 
@@ -35,23 +37,21 @@ export default function Dashboard() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [incidentsData, statsData] = await Promise.all([
-          incidentService.getAll(),
-          statsService.getGlobal(),
-        ]);
+        const incidentsData = await incidentService.getAll();
 
-        // Muestra solo los 12 más recientes en el dashboard
         const parsed = incidentsData
-          .map((inc) => ({ ...inc, date: new Date(inc.date ?? inc.created_at) }))
-          .sort((a, b) => b.date - a.date)
+          .map((inc) => ({ ...inc, date: new Date(inc.date ?? inc.created_at ?? Date.now()) }))
+          .filter((inc) => inc.status !== "Finalizado")
+          .sort((a, b) => (b.votes ?? 0) - (a.votes ?? 0))
           .slice(0, 12);
 
         setIncidents(parsed);
 
+        const now = new Date();
         setStatsValues([
-          { id: 1, label: "Incidentes activos",     value: statsData.active   ?? 0 },
-          { id: 2, label: "Pendientes de revisión", value: statsData.pending  ?? 0 },
-          { id: 3, label: "Resueltos este mes",     value: statsData.resolved ?? 0 },
+          { id: 1, label: "Incidentes activos",     value: incidentsData.filter((i) => i.status !== "Finalizado").length },
+          { id: 2, label: "Incidentes pendientes",  value: incidentsData.filter((i) => i.status === "Pendiente").length },
+          { id: 3, label: "Incidentes resueltos",   value: incidentsData.filter((i) => i.status === "Finalizado").length },
         ]);
       } catch (err) {
         setError("No se pudieron cargar los datos.");

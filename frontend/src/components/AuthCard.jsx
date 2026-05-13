@@ -205,7 +205,7 @@ const loginFields = [
   },
 ];
 
-export function ARITLogin() {
+export function ARITLogin({ onSubmit }) {
   const [serverErrors, setServerErrors] = useState({});
 
   return (
@@ -218,13 +218,7 @@ export function ARITLogin() {
       footerLinkHref="/register"
       serverErrors={serverErrors}
       showIcons={false}
-      onSubmit={(data, done) => {
-        console.log("Login Payload:", data);
-        setTimeout(() => {
-          done();
-          window.location.href = "/dashboard";
-        }, 1000);
-      }}
+      onSubmit={onSubmit}
     />
   );
 }
@@ -292,7 +286,7 @@ const registerFields = [
   },
 ];
 
-export function ARITRegister() {
+export function ARITRegister({ onSubmit }) {
   const [serverErrors, setServerErrors] = useState({});
 
   return (
@@ -305,13 +299,7 @@ export function ARITRegister() {
       footerLinkHref="/login"
       serverErrors={serverErrors}
       showIcons={true}
-      onSubmit={(data, done) => {
-        console.log("Register Payload:", data);
-        setTimeout(() => {
-          done();
-          window.location.href = "/login";
-        }, 1000);
-      }}
+      onSubmit={onSubmit}
     />
   );
 }

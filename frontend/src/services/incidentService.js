@@ -87,6 +87,14 @@ const incidentService = {
     const { data } = await api.patch(`/incidents/${id}/`, { status });
     return data;
   },
+
+  async assign(incidentId, username) {
+    const { data } = await api.patch(`/incidents/${incidentId}/`, {
+      assigned:    true,
+      assigned_to: username,
+    });
+    return data;
+  },
 };
 
 export default incidentService;

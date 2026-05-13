@@ -6,7 +6,7 @@ const priorityStyles = {
   Crítico:  "bg-red-700    text-red-50    bg-opacity-70",
 };
 
-export default function IncidentInfo({ name, location, description, priority, status, category, date, author }) {
+export default function IncidentInfo({ name, location, description, priority, status, category, date, author, assignedTo }) {
   const badgeClass = priorityStyles[priority] ?? "bg-black text-white bg-opacity-70";
 
   return (
@@ -55,6 +55,18 @@ export default function IncidentInfo({ name, location, description, priority, st
           </p>
         </div>
       </div>
+
+      {assignedTo && (
+        <div className="flex items-center gap-3 pt-1 border-t border-gray-200">
+          <div className="w-7 h-7 rounded-full bg-green-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+            {assignedTo.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-gray-700">{assignedTo}</p>
+            <p className="text-xs text-gray-400">Trabajador asignado</p>
+          </div>
+        </div>
+      )}
 
     </div>
   );

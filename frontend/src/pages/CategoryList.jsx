@@ -2,6 +2,10 @@ import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+import { usePageTitle } from "../hooks/usePageTitle";
+
+import incidentService from "../services/incidentService";
+
 import { userActions, adminActions, workerActions, getActionsByRole } from "../data/actionButtons";
 
 import Navbar        from "../components/Navbar";
@@ -14,6 +18,7 @@ import categoryService from "../services/categoryService";
 import { useToast }    from "../components/ToastContainer";
 
 export default function CategoryList() {
+  usePageTitle("Categorías");
   const navigate  = useNavigate();
   const { user }  = useAuth();
   const toast     = useToast();
@@ -34,11 +39,20 @@ export default function CategoryList() {
 
   // ── Carga inicial ──
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await categoryService.getAll();
-        setCategories(data);
+        const [categoriesData, incidentsData] = await Promise.all([
+          categoryService.getAll(),
+          incidentService.getAll(),
+        ]);
+
+        const categoriesWithCount = categoriesData.map((cat) => ({
+          ...cat,
+          incidentCount: incidentsData.filter((inc) => inc.category === cat.name).length,
+        }));
+
+        setCategories(categoriesWithCount);
       } catch (err) {
         setError("No se pudieron cargar las categorías.");
         console.error(err);
@@ -46,7 +60,7 @@ export default function CategoryList() {
         setLoading(false);
       }
     };
-    fetchCategories();
+    fetchData();
   }, []);
 
   // ── Handlers ──
@@ -73,7 +87,10 @@ export default function CategoryList() {
       setCategories((prev) => prev.filter((c) => c.id !== id));
       toast({ message: "Categoría eliminada correctamente.", type: "success" });
     } catch (err) {
-      toast({ message: "Error al eliminar la categoría.", type: "error" });
+      const msg = err.response?.status === 400
+        ? "No se puede eliminar una categoría con incidentes asociados."
+        : "Error al eliminar la categoría.";
+      toast({ message: msg, type: "error" });
     }
   };
 
@@ -169,7 +186,7 @@ export default function CategoryList() {
 
         <aside className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t px-4 py-1 lg:sticky lg:top-14 lg:self-start lg:h-fit
           lg:border-t-0 lg:border-l-0 lg:w-56 lg:shrink-0 lg:px-0 lg:py-6 lg:order-last xl:w-64 lg:bg-transparent">
-          <ActionButtons actions={totalActions} />
+          <ActionButtons actions={actions} />
         </aside>
 
       </main>

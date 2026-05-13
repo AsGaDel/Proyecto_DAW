@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+import { usePageTitle } from "../hooks/usePageTitle";
+
 import { userActions, adminActions, workerActions, getActionsByRole } from "../data/actionButtons";
 
 import Navbar        from "../components/Navbar";
@@ -14,6 +16,7 @@ import incidentService from "../services/incidentService";
 const SUBSCRIBED_PER_PAGE = 36;
 
 export default function SubscribedList() {
+  usePageTitle("Mis suscripciones");
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -56,6 +59,12 @@ export default function SubscribedList() {
     fetchSubscribed();
   }, []);
 
+  const handleUnsubscribe = (id, isNowSubscribed) => {
+    if (!isNowSubscribed) {
+      setIncidents((prev) => prev.filter((inc) => inc.id !== id));
+    }
+  };
+
   // ── Paginación ──
   const totalPages = Math.ceil(incidents.length / SUBSCRIBED_PER_PAGE);
 
@@ -95,7 +104,7 @@ export default function SubscribedList() {
                     <p className="text-sm text-gray-400">Todavía no te has suscrito a ningún incidente.</p>
                   </div>
                 )
-                : <CardGrid incidents={paginatedIncidents} title="Incidentes a los que te has suscrito" />
+                : <CardGrid incidents={paginatedIncidents} title="Incidentes a los que te has suscrito" onSubscribe={handleUnsubscribe} />
               }
 
               {totalPages > 1 && (
@@ -151,7 +160,7 @@ export default function SubscribedList() {
         <aside className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t px-4 py-1
           lg:sticky lg:top-14 lg:self-start lg:h-fit lg:border-t-0 lg:border-l-0 lg:w-56 lg:shrink-0 lg:px-0 lg:py-6 lg:order-last
           xl:w-64 lg:bg-transparent">
-          <ActionButtons actions={totalActions} />
+          <ActionButtons actions={actions} />
         </aside>
 
       </main>

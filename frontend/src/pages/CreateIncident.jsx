@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+import { usePageTitle } from "../hooks/usePageTitle";
+
 import { userActions, adminActions, workerActions, getActionsByRole } from "../data/actionButtons";
 
 import Navbar             from "../components/Navbar";
@@ -13,6 +15,7 @@ import incidentService from "../services/incidentService";
 import { useToast }    from "../components/ToastContainer";
 
 export default function CreateIncident() {
+  usePageTitle("Crear incidente");
   const navigate      = useNavigate();
   const { user }      = useAuth();
   const toast         = useToast();
@@ -25,6 +28,7 @@ export default function CreateIncident() {
   const [loading,   setLoading]   = useState(false);
   const [success,   setSuccess]   = useState(false);
   const [createdId, setCreatedId] = useState(null);
+  const [resetKey, setResetKey]   = useState(0);
 
   const handleSubmit = async (formData) => {
     setLoading(true);
@@ -56,7 +60,7 @@ export default function CreateIncident() {
           <div className="flex flex-col gap-2">
             {createdId && (
               <button
-                onClick={() => navigate(`/incidente/${createdId}`)}
+                onClick={() => navigate(`/incident/${createdId}`)}
                 className="text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors"
               >
                 Ver el incidente
@@ -69,7 +73,7 @@ export default function CreateIncident() {
               Ver todos los incidentes
             </button>
             <button
-              onClick={() => { setSuccess(false); setCreatedId(null); }}
+              onClick={() => { setSuccess(false); setCreatedId(null); setResetKey((k) => k + 1); }}
               className="text-xs text-gray-500 hover:text-gray-700 font-medium transition-colors"
             >
               Publicar otro incidente
@@ -96,13 +100,13 @@ export default function CreateIncident() {
               Rellena los datos para publicar un nuevo incidente en tu zona.
             </p>
           </div>
-          <CreateIncidentForm onSubmit={handleSubmit} loading={loading} />
+          <CreateIncidentForm key={resetKey} onSubmit={handleSubmit} loading={loading} />
         </section>
 
         <aside className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t px-4 py-1
           lg:sticky lg:top-14 lg:self-start lg:h-fit lg:border-t-0 lg:border-l-0 lg:w-56 lg:shrink-0 lg:px-0 lg:py-6 lg:order-last
           xl:w-64 lg:bg-transparent">
-          <ActionButtons actions={totalActions} />
+          <ActionButtons actions={actions} />
         </aside>
       </main>
 

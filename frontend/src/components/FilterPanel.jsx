@@ -27,7 +27,7 @@ function Section({ title, children }) {
   );
 }
 
-export default function FilterPanel({ filters, onChange, authors = [], horizontal = false }) {
+export default function FilterPanel({ filters, onChange, horizontal = false }) {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -86,14 +86,14 @@ export default function FilterPanel({ filters, onChange, authors = [], horizonta
               type="text"
               value={filters.search ?? ""}
               onChange={(e) => onChange({ ...filters, search: e.target.value })}
-              placeholder="Nombre del incidente..."
+              placeholder="Incidente o usuario..."
               className="w-full bg-white border border-gray-100 rounded-lg pl-8 pr-3 py-2 text-xs text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
             />
           </div>
         </Section>
         {hasActiveFilters && (
           <button
-            onClick={() => onChange({ search: "", priorities: [], statuses: [], categories: [], author: "", dateFrom: "", dateTo: "" })}
+            onClick={() => onChange({ search: "", priorities: [], statuses: [], categories: [], dateFrom: "", dateTo: "" })}
             className="text-sm font-semibold text-blue-600 hover:font-extrabold transition-colors"
           >
             Limpiar
@@ -146,7 +146,7 @@ export default function FilterPanel({ filters, onChange, authors = [], horizonta
       {/* Filtro por categoría — solo se muestra si hay categorías */}
       {categories.length > 0 && (
         <Section title="Categoría">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 lg:max-h-[126px] lg:overflow-y-auto lg:pr-1">
             {categories.map((cat) => {
               const isActive = (filters.categories ?? []).includes(cat.name);
               return (
