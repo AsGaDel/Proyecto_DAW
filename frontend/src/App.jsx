@@ -18,6 +18,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import CookiePolicy from "./pages/CookiePolicy";
 import Contact from "./pages/Contact";
 import PrivateRoute from "./components/PrivateRoute";
+import NotFound from "./pages/NotFound";
 
 function App() {
   
@@ -32,24 +33,23 @@ function App() {
         <Route path="/privacidad" element={<PrivacyPolicy />} />
         <Route path="/cookies" element={<CookiePolicy />} />
         <Route path="/contacto" element={<Contact />} />
+        <Route path="*" element={<NotFound />} />
 
 
-        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-        <Route path="/incident-list" element={<PrivateRoute><IncidentList /></PrivateRoute>} />
-        <Route path="/incident" element={<PrivateRoute><IncidentDetails /></PrivateRoute>} />
+        <Route path="/dashboard"      element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/incident-list"  element={<PrivateRoute><IncidentList /></PrivateRoute>} />
+        <Route path="/incident/:id"   element={<PrivateRoute><IncidentDetails /></PrivateRoute>} />
         <Route path="/create-incident" element={<PrivateRoute><CreateIncident /></PrivateRoute>} />
-        <Route path="/subscribed" element={<PrivateRoute></PrivateRoute>} />
-        <Route path="/my-incidents" element={<PrivateRoute><MyIncidentsList /></PrivateRoute>} />
-        <Route path="/user-profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
+        <Route path="/subscribed"     element={<PrivateRoute><SubscribedList /></PrivateRoute>} />
+        <Route path="/my-incidents"   element={<PrivateRoute><MyIncidentsList /></PrivateRoute>} />
+        <Route path="/profile"        element={<PrivateRoute><UserProfile /></PrivateRoute>} />
         <Route path="/profile/:username" element={<PrivateRoute><PublicProfile /></PrivateRoute>} />
-        <Route path="/notifications" element={<PrivateRoute><NotificationList /></PrivateRoute>} />
+        <Route path="/notifications"  element={<PrivateRoute><NotificationList /></PrivateRoute>} />
 
+        <Route path="/assigned-list"  element={<PrivateRoute roles={["worker"]}><AssignedList /></PrivateRoute>} />
 
-        <Route path="/assigned-list" element={<PrivateRoute roles={["worker"]}><AssignedList /></PrivateRoute>} />
-
-
-        <Route path="/user-list" element={<PrivateRoute roles={["admin"]}><UserList /></PrivateRoute>} />
-        <Route path="/category-list" element={<PrivateRoute roles={["admin"]}><CategoryList /></PrivateRoute>} />
+        <Route path="/user-list"      element={<PrivateRoute roles={["admin"]}><UserList /></PrivateRoute>} />
+        <Route path="/category-list"  element={<PrivateRoute roles={["admin"]}><CategoryList /></PrivateRoute>} />
        
       </Routes>
     </BrowserRouter>

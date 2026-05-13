@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+import { usePageTitle } from "../hooks/usePageTitle";
+
 import Navbar            from "../components/Navbar";
 import Footer            from "../components/Footer";
 import ProfileAvatar     from "../components/ProfileAvatar";
@@ -10,8 +12,8 @@ import ProfileSubscribed from "../components/ProfileSubscribed";
 
 import userService     from "../services/userService";
 import incidentService from "../services/incidentService";
-import statsService    from "../services/statsService";
 import { useToast }    from "../components/ToastContainer";
+import { useAuth } from "../context/AuthContext";
 
 // ─── Iconos para estadísticas ─────────────────────────────────────────────────
 
@@ -36,6 +38,7 @@ const statIcons = {
 // ─── Página ───────────────────────────────────────────────────────────────────
 
 export default function UserProfile() {
+  usePageTitle("Mi perfil");
   const toast = useToast();
 
   const [user,        setUser]        = useState(null);
@@ -46,17 +49,17 @@ export default function UserProfile() {
   const [loading,     setLoading]     = useState(true);
   const [error,       setError]       = useState(null);
   const [activeTab,   setActiveTab]   = useState("reportados");
+  const { setUser: setAuthUser } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [userData, myIncidentsData, subscribedData, stats] = await Promise.all([
+        const [userData, myIncidentsData, subscribedData] = await Promise.all([
           userService.getMe(),
           incidentService.getMine(),
           incidentService.getSubscribed(),
-          statsService.getByUser("me"),
-        ]);
+        ])
 
         setUser({
           ...userData,
@@ -76,9 +79,9 @@ export default function UserProfile() {
         })));
 
         setStatsData([
-          { label: "Reportados",      value: stats.reportados ?? myIncidentsData.length, icon: statIcons.reportados },
-          { label: "Votos recibidos", value: stats.votos      ?? 0,                      icon: statIcons.votos      },
-          { label: "Suscritos",       value: stats.suscritos  ?? subscribedData.length,  icon: statIcons.suscritos  },
+          { label: "Reportados",      value: myIncidentsData.length, icon: statIcons.reportados },
+          { label: "Votos recibidos", value: myIncidentsData.reduce((acc, inc) => acc + (inc.votes ?? 0), 0), icon: statIcons.votos },
+          { label: "Suscritos",       value: subscribedData.length,  icon: statIcons.suscritos  },
         ]);
       } catch (err) {
         setError("No se pudo cargar el perfil.");
@@ -94,6 +97,7 @@ export default function UserProfile() {
     try {
       const updated = await userService.uploadAvatar(file);
       setAvatar(updated.avatar ?? URL.createObjectURL(file));
+      setAuthUser((prev) => ({ ...prev, avatar: updated.avatar }));
       toast({ message: "Foto de perfil actualizada.", type: "success" });
     } catch (err) {
       toast({ message: "Error al actualizar la foto.", type: "error" });
@@ -155,6 +159,13 @@ export default function UserProfile() {
             <div className="text-center sm:text-left">
               <h1 className="text-xl font-black text-gray-900">{user.full_name ?? user.fullName}</h1>
               <p className="text-sm text-gray-400">@{user.username}</p>
+              <span className={`text-xs font-semibold px-2 py-1 rounded-md mt-1 inline-block
+                ${user.role === "admin"  ? "bg-red-50  text-red-600  border border-red-200"  :
+                  user.role === "worker" ? "bg-blue-50 text-blue-600 border border-blue-200" :
+                                          "bg-gray-50 text-gray-500 border border-gray-200"}`}>
+                {user.role === "admin"  ? "Administrador" :
+                user.role === "worker" ? "Trabajador"    : "Usuario"}
+              </span>
             </div>
             <ProfileStats stats={statsData} />
           </div>

@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
+import { usePageTitle } from "../hooks/usePageTitle";
+
 import Navbar           from "../components/Navbar";
 import Footer           from "../components/Footer";
 import IncidentPhoto    from "../components/IncidentPhoto";
@@ -17,6 +19,7 @@ export default function IncidentDetails() {
   const [incident, setIncident] = useState(null);
   const [loading,  setLoading]  = useState(true);
   const [error,    setError]    = useState(null);
+  usePageTitle(incident?.name);
 
   useEffect(() => {
     const fetchIncident = async () => {
@@ -96,8 +99,14 @@ export default function IncidentDetails() {
               category={incident.category}
               date={incident.date}
               author={incident.author}
+              assignedTo={incident.assigned_to ?? null}
             />
-            <IncidentActions incidentId={incident.id} />
+            <IncidentActions
+              incidentId={incident.id}
+              initialVoted={incident.user_voted ?? false}
+              initialSubscribed={incident.user_subscribed ?? false}
+              initialVotes={incident.votes ?? 0}
+            />
           </div>
 
         </div>

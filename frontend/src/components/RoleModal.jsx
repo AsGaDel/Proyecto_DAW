@@ -6,9 +6,9 @@ export default function RoleModal({ user, onSave, onClose }) {
   const [selectedRole, setSelectedRole] = useState(user.role || "user");
 
   const roles = [
-    { id: "user", label: "Usuario", desc: "Permisos estándar de lectura y voto." },
-    { id: "worker", label: "Trabajador", desc: "Gestión de contenido y reportes." },
-    { id: "admin", label: "Administrador", desc: "Control total del sistema." },
+    { id: "user", label: "Usuario", desc: "Permisos de publicación, suscripción y voto." },
+    { id: "worker", label: "Trabajador", desc: "Permisos de usuario y gestión de arreglos." },
+    { id: "admin", label: "Administrador", desc: "Gestión del sistema, usuarios, categorías y asignación de arreglos." },
   ];
 
   const handleSave = () => {

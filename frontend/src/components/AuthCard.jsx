@@ -211,7 +211,7 @@ const loginFields = [
   },
 ];
 
-export function ARITLogin() {
+export function ARITLogin({ onSubmit }) {
   const [serverErrors, setServerErrors] = useState({});
   const navigate = useNavigate();
 
@@ -225,12 +225,7 @@ export function ARITLogin() {
       footerLinkHref="/register"
       serverErrors={serverErrors}
       showIcons={false}
-      onSubmit={(data, done) => {
-        authService.login(data)
-          .then(() => navigate("/dashboard"))
-          .catch(() => setServerErrors({ password: "Correo o contraseña incorrectos." }))
-          .finally(done);
-      }}
+      onSubmit={onSubmit}
     />
   );
 }
@@ -298,7 +293,7 @@ const registerFields = [
   },
 ];
 
-export function ARITRegister() {
+export function ARITRegister({ onSubmit }) {
   const [serverErrors, setServerErrors] = useState({});
   const navigate = useNavigate();
 
@@ -312,18 +307,7 @@ export function ARITRegister() {
       footerLinkHref="/login"
       serverErrors={serverErrors}
       showIcons={true}
-      onSubmit={(data, done) => {
-        authService.register(data)
-          .then(() => navigate("/login"))
-          .catch((err) => {
-            const detail = err.response?.data;
-            setServerErrors({
-              email:    detail?.email?.[0]    ?? "",
-              username: detail?.username?.[0] ?? "",
-            });
-          })
-          .finally(done);
-      }}
+      onSubmit={onSubmit}
     />
   );
 }

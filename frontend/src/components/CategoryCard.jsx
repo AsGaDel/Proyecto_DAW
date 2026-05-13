@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 export default function CategoryCard({ category, onEdit, onDelete }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-gray-300 transition-all duration-200">
@@ -24,12 +27,14 @@ export default function CategoryCard({ category, onEdit, onDelete }) {
       {!confirmDelete
         ? (
           <div className="flex gap-2">
-            <button
-              onClick={() => console.log("Ver incidentes:", category.name)}
-              className="flex-1 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 border border-gray-200 px-3 py-2 rounded-lg transition-colors"
-            >
-              Ver incidentes
-            </button>
+            {(category.incidentCount ?? 0) > 0 && (
+              <button
+                onClick={() => navigate("/incident-list", { state: { category: category.name } })}
+                className="flex-1 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 border border-gray-200 px-3 py-2 rounded-lg transition-colors"
+              >
+                Ver incidentes
+              </button>
+            )}
             <button
               onClick={() => onEdit(category)}
               className="flex-1 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3 py-2 rounded-lg transition-colors"

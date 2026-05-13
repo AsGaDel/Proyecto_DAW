@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
+import { usePageTitle } from "../hooks/usePageTitle";
+
 import { userActions, adminActions, workerActions, getActionsByRole } from "../data/actionButtons";
 
 import Navbar        from "../components/Navbar";
@@ -10,6 +12,7 @@ import Footer        from "../components/Footer";
 import UserCard      from "../components/UserCard";
 
 import userService  from "../services/userService";
+import incidentService from "../services/incidentService";
 import { useToast } from "../components/ToastContainer";
 
 const roleLabels = {
@@ -21,6 +24,7 @@ const roleLabels = {
 const USERS_PER_PAGE = 12;
 
 export default function UserList() {
+  usePageTitle("Usuarios");
   const navigate  = useNavigate();
   const { user }  = useAuth();
   const toast     = useToast();
@@ -51,12 +55,21 @@ export default function UserList() {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const data = await userService.getAll();
-        const parsed = data.map((u) => ({
+        const [usersData, incidentsData] = await Promise.all([
+          userService.getAll(),
+          incidentService.getAll(),
+        ]);
+
+        const parsed = usersData.map((u) => ({
           ...u,
           fullName: u.full_name ?? u.fullName,
-          stats: u.stats ?? { reportados: 0, votos: 0, suscritos: 0 },
+          stats: {
+            reportados: incidentsData.filter((inc) => inc.author?.username === u.username).length,
+            votos:      incidentsData.filter((inc) => inc.author?.username === u.username).reduce((acc, inc) => acc + (inc.votes ?? 0), 0),
+            suscritos:  0,
+          },
         }));
+
         setUsers(parsed);
       } catch (err) {
         setError("No se pudieron cargar los usuarios.");
@@ -245,7 +258,7 @@ export default function UserList() {
 
         <aside className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t px-4 py-1 lg:sticky lg:top-14 lg:self-start lg:h-fit
           lg:border-t-0 lg:border-l-0 lg:w-56 lg:shrink-0 lg:px-0 lg:py-6 lg:order-last xl:w-64 lg:bg-transparent">
-          <ActionButtons actions={totalActions} />
+          <ActionButtons actions={actions} />
         </aside>
 
       </main>

@@ -35,12 +35,12 @@ export default function ProfileDropdown() {
 
   return (
     <Dropdown trigger={trigger} align="right">
-      <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-900">
-        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{displayName}</p>
+      <div className="px-4 py-3 border-b border-gray-100">
+        <p className="text-sm font-semibold text-gray-800">{displayName}</p>
         {email && <p className="text-xs text-gray-400">{email}</p>}
       </div>
       <ul>
-        <DropdownItem label="Ver perfil"    onClick={() => navigate("/perfil")} />
+        <DropdownItem label="Ver perfil"    onClick={() => navigate("/profile")} />
         <DropdownItem label="Cerrar sesión" onClick={logout} danger />
       </ul>
     </Dropdown>

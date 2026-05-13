@@ -6,7 +6,9 @@ import ShareModal from "./ShareModal";
 
 import incidentService from "../services/incidentService";
 
-export default function IncidentCard({ id, name, photo, priority, status, category, date, author }) {
+export default function IncidentCard({ id, name, photo, priority, status, category, date, author, userVoted = false, userSubscribed = false, onVote, onSubscribe }) {
+  const [voted,      setVoted]      = useState(userVoted);
+  const [subscribed, setSubscribed] = useState(userSubscribed);
   const navigate = useNavigate();
   const toast = useToast();
   const [shareOpen, setShareOpen] = useState(false);
@@ -24,7 +26,7 @@ export default function IncidentCard({ id, name, photo, priority, status, catego
   );
 
   return (
-    <div  onClick={() => navigate(`/incidente/${id}`)} className="bg-white border border-gray-100 shadow-sm 
+    <div  onClick={() => navigate(`/incident/${id}`)} className="bg-white border border-gray-100 shadow-sm 
       rounded-lg overflow-hidden lg:hover:shadow-md lg:hover:border-gray-300 duration-200 active:scale-[0.99] lg:active:border-blue-400 transition-all 
       cursor-pointer group">
 
@@ -46,22 +48,32 @@ export default function IncidentCard({ id, name, photo, priority, status, catego
 
         <Dropdown trigger={trigger} align="right">
           <ul>
-            <DropdownItem label="Votar" onClick={async () => {
+          <DropdownItem
+            label={voted ? "Quitar voto" : "Votar"}
+            onClick={async () => {
               try {
                 await incidentService.vote(id);
-                toast({ message: "Has votado este incidente.", type: "info" });
+                setVoted((prev) => !prev);
+                onVote?.(id, !voted);
+                toast({ message: voted ? "Voto eliminado." : "Has votado este incidente.", type: "info" });
               } catch (err) {
                 toast({ message: "Error al votar.", type: "error" });
               }
-            }} />
-            <DropdownItem label="Suscribirse" onClick={async () => {
+            }}
+          />
+          <DropdownItem
+            label={subscribed ? "Desuscribirse" : "Suscribirse"}
+            onClick={async () => {
               try {
                 await incidentService.subscribe(id);
-                toast({ message: "Te has suscrito a este incidente.", type: "success" });
+                setSubscribed((prev) => !prev);
+                onSubscribe?.(id, !subscribed);
+                toast({ message: subscribed ? "Te has desuscrito." : "Te has suscrito.", type: "success" });
               } catch (err) {
                 toast({ message: "Error al suscribirse.", type: "error" });
               }
-            }} />
+            }}
+          />
             <DropdownItem label="Compartir" onClick={() => setShareOpen(true)} />
           </ul>
         </Dropdown>
@@ -108,7 +120,7 @@ export default function IncidentCard({ id, name, photo, priority, status, catego
 
           {shareOpen && (
             <ShareModal
-              url={`${window.location.origin}/incidente/${id}`}
+              url={`${window.location.origin}/incident/${id}`}
               onClose={(e) => { e?.stopPropagation(); setShareOpen(false); }}
             />
           )}

@@ -112,7 +112,7 @@ export default function NotificationsDropdown() {
       {/* Ver todas */}
       <div className="px-4 py-3">
         <button
-          onClick={() => navigate("/notificaciones")}
+          onClick={() => navigate("/notifications")}
           className="w-full text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-colors text-center"
         >
           Ver todas las notificaciones →

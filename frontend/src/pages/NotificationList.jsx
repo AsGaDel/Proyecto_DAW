@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
+import { usePageTitle } from "../hooks/usePageTitle";
+
 import notificationService from "../services/notificationService";
 
 // ─── Iconos y colores ─────────────────────────────────────────────────────────
@@ -55,6 +57,7 @@ function timeAgo(date) {
 // ─── Página ───────────────────────────────────────────────────────────────────
 
 export default function NotificationList() {
+  usePageTitle("Notificaciones");
   const navigate = useNavigate();
 
   const [notifications, setNotifications] = useState([]);
@@ -178,7 +181,7 @@ export default function NotificationList() {
                       </p>
                       {n.incident && (
                         <button
-                          onClick={(e) => { e.stopPropagation(); navigate(`/incidente/${n.incident.id}`); }}
+                          onClick={(e) => { e.stopPropagation(); navigate(`/incident/${n.incident.id}`); }}
                           className="text-xs text-blue-600 hover:underline font-medium mt-0.5 text-left"
                         >
                           → {n.incident.name}

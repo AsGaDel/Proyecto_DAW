@@ -2,6 +2,8 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
+import { usePageTitle } from "../hooks/usePageTitle";
+
 // ─── Validadores ──────────────────────────────────────────────────────────────
 
 function validate(form) {
@@ -57,6 +59,7 @@ function Section({ title, children }) {
 // ─── Componente Principal ─────────────────────────────────────────────────────
 
 export default function Contact() {
+  usePageTitle("Contacto");
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -95,7 +98,6 @@ export default function Contact() {
     setLoading(true);
     // Simulación de envío
     setTimeout(() => {
-      console.log("Datos de contacto enviados:", form);
       alert("Mensaje enviado con éxito.");
       setLoading(false);
     }, 1500);
