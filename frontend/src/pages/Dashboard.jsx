@@ -49,9 +49,9 @@ export default function Dashboard() {
 
         const now = new Date();
         setStatsValues([
-          { id: 1, label: "Incidentes activos",     value: incidentsData.filter((i) => i.status !== "Finalizado").length },
-          { id: 2, label: "Incidentes pendientes",  value: incidentsData.filter((i) => i.status === "Pendiente").length },
-          { id: 3, label: "Incidentes resueltos",   value: incidentsData.filter((i) => i.status === "Finalizado").length },
+          { id: 1, label: "Incidentes activos",     value: incidentsData.filter((i) => i.status !== "Finalizado").length, onClick: () => navigate("/incident-list", { state: { statuses: ["Pendiente", "En proceso"] } })},
+          { id: 2, label: "Incidentes pendientes",  value: incidentsData.filter((i) => i.status === "Pendiente").length,  onClick: () => navigate("/incident-list", { state: { statuses: ["Pendiente"] } })},
+          { id: 3, label: "Incidentes resueltos",   value: incidentsData.filter((i) => i.status === "Finalizado").length, onClick: () => navigate("/incident-list", { state: { statuses: ["Finalizado"] } })},
         ]);
       } catch (err) {
         setError("No se pudieron cargar los datos.");
