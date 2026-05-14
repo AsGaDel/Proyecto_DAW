@@ -34,7 +34,7 @@ export default function SubscribedList() {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, [currentPage]);
 
   // ── Carga inicial ──
