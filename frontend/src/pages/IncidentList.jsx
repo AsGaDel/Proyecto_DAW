@@ -79,13 +79,13 @@ export default function IncidentList() {
   }, []);
 
   useEffect(() => {
-  if (location.state?.category) {
-    setFilters((prev) => ({
-      ...prev,
-      categories: [location.state.category],
-    }));
-  }
-}, [location.state]);
+    if (location.state?.category) {
+      setFilters((prev) => ({ ...prev, categories: [location.state.category] }));
+    }
+    if (location.state?.statuses) {
+      setFilters((prev) => ({ ...prev, statuses: location.state.statuses }));
+    }
+  }, [location.state]);
 
   // ── Handlers ──
   const handleFiltersChange = (newFilters) => {
