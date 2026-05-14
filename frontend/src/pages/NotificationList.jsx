@@ -47,11 +47,15 @@ const typeColors = {
 };
 
 function timeAgo(date) {
-  const diff = Math.floor((Date.now() - date.getTime()) / 1000);
-  if (diff < 60)    return "Hace un momento";
-  if (diff < 3600)  return `Hace ${Math.floor(diff / 60)} min`;
-  if (diff < 86400) return `Hace ${Math.floor(diff / 3600)} h`;
-  return `Hace ${Math.floor(diff / 86400)} días`;
+  const now    = new Date();
+  const diff   = Math.floor((now - date) / 1000);
+  const months = (now.getFullYear() - date.getFullYear()) * 12 + (now.getMonth() - date.getMonth());
+
+  if (diff < 60)      return "Hace un momento";
+  if (diff < 3600)    return `Hace ${Math.floor(diff / 60)} min`;
+  if (diff < 86400)   return `Hace ${Math.floor(diff / 3600)} h`;
+  if (months < 1)     return `Hace ${Math.floor(diff / 86400)} días`;
+  return `Hace ${months} ${months === 1 ? "mes" : "meses"}`;
 }
 
 // ─── Página ───────────────────────────────────────────────────────────────────

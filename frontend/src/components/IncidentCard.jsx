@@ -6,6 +6,19 @@ import ShareModal from "./ShareModal";
 
 import incidentService from "../services/incidentService";
 
+function timeAgo(date) {
+  const now    = new Date();
+  const diff   = Math.floor((now - date) / 1000);
+  const months = (now.getFullYear() - date.getFullYear()) * 12 + (now.getMonth() - date.getMonth());
+
+  if (diff < 60)      return "Hace un momento";
+  if (diff < 3600)    return `Hace ${Math.floor(diff / 60)} min`;
+  if (diff < 86400)   return `Hace ${Math.floor(diff / 3600)} h`;
+  if (months < 1)     return `Hace ${Math.floor(diff / 86400)} días`;
+  return `Hace ${months} ${months === 1 ? "mes" : "meses"}`;
+}
+
+
 export default function IncidentCard({ id, name, photo, priority, status, category, date, author, userVoted = false, userSubscribed = false, onVote, onSubscribe }) {
   const [voted,      setVoted]      = useState(userVoted);
   const [subscribed, setSubscribed] = useState(userSubscribed);
@@ -115,7 +128,7 @@ export default function IncidentCard({ id, name, photo, priority, status, catego
             : <span className="text-black inline-block text-xs  mb-2 ml-1">{status}</span>
           }
           </div>
-        <div className="text-xs font-medium text-gray-700 tracking-wide">{new Intl.DateTimeFormat("es-ES", { dateStyle: "medium", timeStyle: "short" }).format(date)}</div>
+        <div className="text-xs font-medium text-gray-700 tracking-wide">{timeAgo(date)}</div>
       </div>
 
           {shareOpen && (
