@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { mediaUrl } from "../utils/mediaUrl";
 
 import { usePageTitle } from "../hooks/usePageTitle";
+import { useAuth } from "../context/AuthContext";
 
 import Navbar           from "../components/Navbar";
 import Footer           from "../components/Footer";
@@ -9,44 +11,42 @@ import IncidentPhoto    from "../components/IncidentPhoto";
 import IncidentInfo     from "../components/IncidentInfo";
 import IncidentActions  from "../components/IncidentActions";
 import IncidentComments from "../components/IncidentComments";
+import AssignPanel      from "../components/AssignPanel";
 
 import incidentService from "../services/incidentService";
 
 export default function IncidentDetails() {
   const { id }       = useParams();
   const navigate     = useNavigate();
+  const { user }     = useAuth();
 
   const [incident, setIncident] = useState(null);
   const [loading,  setLoading]  = useState(true);
   const [error,    setError]    = useState(null);
-  usePageTitle(incident?.name);
+  usePageTitle(incident?.title);
 
-  useEffect(() => {
-    const fetchIncident = async () => {
-      try {
-        setLoading(true);
-        const data = await incidentService.getById(id);
-
-        // Normaliza la ubicación — ajusta los campos según tu backend
-        const location = (data.latitude && data.longitude)
-          ? { latlng: { lat: data.latitude, lng: data.longitude }, address: data.address ?? "" }
-          : null;
-
-        setIncident({
-          ...data,
-          date:     new Date(data.date ?? data.created_at),
-          location,
-          author:   data.author ?? { username: data.author_username, avatar: data.author_avatar ?? null },
-        });
-      } catch (err) {
-        setError("No se pudo cargar el incidente.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchIncident();
+  const fetchIncident = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await incidentService.getById(id);
+      const location = (data.latitude && data.longitude)
+        ? { latlng: { lat: data.latitude, lng: data.longitude }, address: data.address ?? "" }
+        : null;
+      setIncident({
+        ...data,
+        date:   new Date(data.date ?? data.created_at),
+        location,
+        author: { username: data.reporter_username ?? 'Usuario', avatar: null },
+      });
+    } catch (err) {
+      setError("No se pudo cargar el incidente.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
+
+  useEffect(() => { fetchIncident(); }, [fetchIncident]);
 
   if (loading) return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
@@ -85,13 +85,13 @@ export default function IncidentDetails() {
 
           {/* Foto */}
           <div className="w-full md:w-2/5 shrink-0">
-            <IncidentPhoto photo={incident.photo} name={incident.name} />
+            <IncidentPhoto photo={mediaUrl(incident.photos?.[0]?.image)} name={incident.title} />
           </div>
 
           {/* Info + acciones */}
           <div className="flex-1 flex flex-col gap-6">
             <IncidentInfo
-              name={incident.name}
+              name={incident.title}
               location={incident.location}
               description={incident.description}
               priority={incident.priority}
@@ -103,10 +103,17 @@ export default function IncidentDetails() {
             />
             <IncidentActions
               incidentId={incident.id}
-              initialVoted={incident.user_voted ?? false}
-              initialSubscribed={incident.user_subscribed ?? false}
-              initialVotes={incident.votes ?? 0}
+              initialVoted={incident.is_voted ?? false}
+              initialSubscribed={incident.is_subscribed ?? false}
+              initialVotes={incident.vote_count ?? 0}
             />
+            {user?.role === 'admin' && (
+              <AssignPanel
+                incidentId={incident.id}
+                workOrder={incident.work_order ?? null}
+                onAssigned={fetchIncident}
+              />
+            )}
           </div>
 
         </div>

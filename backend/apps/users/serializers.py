@@ -39,13 +39,22 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     """Serializer para que el usuario vea y edite su propio perfil."""
     profile = UserProfileSerializer()
-    # Estadísticas de actividad del usuario, usadas en la página de perfil
     stats   = serializers.SerializerMethodField()
+    avatar  = serializers.SerializerMethodField()
 
     class Meta:
         model  = User
-        fields = ['id', 'username', 'email', 'full_name', 'role', 'is_active', 'date_joined', 'profile', 'stats']
-        read_only_fields = ['id', 'role', 'is_active', 'date_joined', 'stats']
+        fields = ['id', 'username', 'email', 'full_name', 'role', 'is_active', 'date_joined', 'profile', 'stats', 'avatar']
+        read_only_fields = ['id', 'role', 'is_active', 'date_joined', 'stats', 'avatar']
+
+    def get_avatar(self, obj):
+        request = self.context.get('request')
+        try:
+            if obj.profile.avatar:
+                return request.build_absolute_uri(obj.profile.avatar.url) if request else obj.profile.avatar.url
+        except Exception:
+            pass
+        return None
 
     def get_stats(self, obj):
         reported      = obj.reported_incidents.filter(deleted_at__isnull=True).count()

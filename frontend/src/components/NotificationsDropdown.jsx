@@ -55,8 +55,18 @@ export default function NotificationsDropdown() {
     fetchNotifications();
   }, []);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
   const preview     = notifications.slice(0, 4);
+
+  const handleClick = async (n) => {
+    if (!n.is_read) {
+      await notificationService.markRead(n.id).catch(() => {});
+      setNotifications((prev) =>
+        prev.map((x) => x.id === n.id ? { ...x, is_read: true } : x)
+      );
+    }
+    if (n.incident) navigate(`/incident/${n.incident}`);
+  };
 
   return (
     <Dropdown
@@ -90,17 +100,19 @@ export default function NotificationsDropdown() {
               {preview.map((n) => (
                 <li
                   key={n.id}
+                  onClick={() => handleClick(n)}
                   className={`flex items-start gap-3 px-4 py-3 border-b border-gray-50 cursor-pointer hover:bg-gray-50 transition-colors
-                    ${!n.read ? "bg-blue-50/50" : ""}`}
+                    ${!n.is_read ? "bg-blue-50/50" : ""}`}
                 >
                   <div className="mt-1.5 shrink-0">
-                    {!n.read
+                    {!n.is_read
                       ? <span className="w-2 h-2 rounded-full bg-blue-500 block" />
                       : <span className="w-2 h-2 rounded-full bg-transparent block" />
                     }
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-gray-700 leading-snug">{n.text}</p>
+                    <p className="text-xs font-semibold text-gray-700 leading-snug">{n.title}</p>
+                    <p className="text-xs text-gray-500 leading-snug">{n.message}</p>
                     <p className="text-xs text-gray-400 mt-0.5">{timeAgo(n.date)}</p>
                   </div>
                 </li>

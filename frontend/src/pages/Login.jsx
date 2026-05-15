@@ -8,7 +8,7 @@ export default function Login() {
 
   const handleLogin = async (data, done) => {
     try {
-      await login({ email: data.username, password: data.password });
+      await login({ email: data.email, password: data.password });
       navigate("/dashboard");
     } catch (err) {
       const msg = err.response?.data?.detail ?? "Usuario o contraseña incorrectos.";

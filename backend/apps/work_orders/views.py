@@ -57,8 +57,9 @@ class WorkOrderViewSet(viewsets.ModelViewSet):
         return [IsWorkerOrAdmin()]
 
     def perform_create(self, serializer):
-        # El campo assigned_by se rellena con el admin autenticado que crea la orden
-        serializer.save(assigned_by=self.request.user)
+        from apps.notifications.services import notify_work_order_assigned
+        work_order = serializer.save(assigned_by=self.request.user)
+        notify_work_order_assigned(work_order)
 
     # ── Acciones extra ──────────────────────────────────────────
 

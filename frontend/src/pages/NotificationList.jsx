@@ -89,12 +89,12 @@ export default function NotificationList() {
     fetchNotifications();
   }, []);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   const markAllRead = async () => {
     try {
       await notificationService.markAllRead();
-      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
     } catch (err) {
       console.error("Error al marcar todas como leídas:", err);
     }
@@ -103,7 +103,7 @@ export default function NotificationList() {
   const markRead = async (id) => {
     try {
       await notificationService.markRead(id);
-      setNotifications((prev) => prev.map((n) => n.id === id ? { ...n, read: true } : n));
+      setNotifications((prev) => prev.map((n) => n.id === id ? { ...n, is_read: true } : n));
     } catch (err) {
       console.error("Error al marcar como leída:", err);
     }
@@ -173,29 +173,30 @@ export default function NotificationList() {
                     key={n.id}
                     onClick={() => markRead(n.id)}
                     className={`flex items-start gap-4 bg-white border rounded-xl px-4 py-4 shadow-sm cursor-pointer hover:border-gray-300 transition-all duration-150
-                      ${!n.read ? "border-blue-200 bg-blue-50/30" : "border-gray-200"}`}
+                      ${!n.is_read ? "border-blue-200 bg-blue-50/30" : "border-gray-200"}`}
                   >
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${typeColors[n.type] ?? "bg-gray-50 text-gray-400"}`}>
                       {typeIcons[n.type]}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm leading-snug ${!n.read ? "font-semibold text-gray-800" : "text-gray-600"}`}>
-                        {n.text}
+                      <p className={`text-sm leading-snug ${!n.is_read ? "font-semibold text-gray-800" : "text-gray-600"}`}>
+                        {n.title}
                       </p>
+                      <p className="text-xs text-gray-500 leading-snug">{n.message}</p>
                       {n.incident && (
                         <button
-                          onClick={(e) => { e.stopPropagation(); navigate(`/incident/${n.incident.id}`); }}
+                          onClick={(e) => { e.stopPropagation(); navigate(`/incident/${n.incident}`); }}
                           className="text-xs text-blue-600 hover:underline font-medium mt-0.5 text-left"
                         >
-                          → {n.incident.name}
+                          → Ver incidente
                         </button>
                       )}
                       <p className="text-xs text-gray-400 mt-0.5">{timeAgo(n.date)}</p>
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      {!n.read && <span className="w-2 h-2 rounded-full bg-blue-500 block" />}
+                      {!n.is_read && <span className="w-2 h-2 rounded-full bg-blue-500 block" />}
                       <button
                         onClick={(e) => { e.stopPropagation(); deleteNotification(n.id); }}
                         className="text-gray-300 hover:text-red-400 transition-colors"

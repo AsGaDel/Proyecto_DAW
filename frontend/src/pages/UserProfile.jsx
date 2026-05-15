@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { mediaUrl } from "../utils/mediaUrl";
 
 import { usePageTitle } from "../hooks/usePageTitle";
 
@@ -63,10 +64,10 @@ export default function UserProfile() {
 
         setUser({
           ...userData,
-          createdAt: new Date(userData.created_at ?? userData.createdAt),
+          createdAt: new Date(userData.date_joined ?? userData.created_at ?? userData.createdAt),
         });
 
-        setAvatar(userData.avatar ?? null);
+        setAvatar(mediaUrl(userData.avatar ?? userData.profile?.avatar) ?? null);
 
         setMyIncidents(myIncidentsData.map((inc) => ({
           ...inc,
@@ -80,7 +81,7 @@ export default function UserProfile() {
 
         setStatsData([
           { label: "Reportados",      value: myIncidentsData.length, icon: statIcons.reportados },
-          { label: "Votos recibidos", value: myIncidentsData.reduce((acc, inc) => acc + (inc.votes ?? 0), 0), icon: statIcons.votos },
+          { label: "Votos recibidos", value: myIncidentsData.reduce((acc, inc) => acc + (inc.vote_count ?? 0), 0), icon: statIcons.votos },
           { label: "Suscritos",       value: subscribedData.length,  icon: statIcons.suscritos  },
         ]);
       } catch (err) {
@@ -96,8 +97,9 @@ export default function UserProfile() {
   const handleAvatarChange = async (file) => {
     try {
       const updated = await userService.uploadAvatar(file);
-      setAvatar(updated.avatar ?? URL.createObjectURL(file));
-      setAuthUser((prev) => ({ ...prev, avatar: updated.avatar }));
+      const avatarUrl = mediaUrl(updated.avatar) ?? URL.createObjectURL(file);
+      setAvatar(avatarUrl);
+      setAuthUser((prev) => ({ ...prev, avatar: avatarUrl }));
       toast({ message: "Foto de perfil actualizada.", type: "success" });
     } catch (err) {
       toast({ message: "Error al actualizar la foto.", type: "error" });

@@ -5,7 +5,7 @@ const notificationService = {
   // Obtener todas las notificaciones del usuario autenticado
   async getAll() {
     const { data } = await api.get('/notifications/');
-    return data;
+    return data.results ?? data;
   },
 
   // Marcar una notificación como leída

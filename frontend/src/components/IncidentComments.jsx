@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
-
-import commentService from "../services/commentService";
+import { useAuth }     from "../context/AuthContext";
+import commentService  from "../services/commentService";
+import { mediaUrl }    from "../utils/mediaUrl";
 
 // ─── Componente Comment ───────────────────────────────────────────────────────
 
@@ -48,8 +48,8 @@ export default function IncidentComments({ incidentId }) {
         const data = await commentService.getByIncident(incidentId);
         const parsed = data.map((c) => ({
           ...c,
-          username: c.author?.username ?? c.username,
-          avatar:   c.author?.avatar   ?? c.avatar ?? null,
+          username: c.author_username ?? c.author_name ?? c.author_email ?? 'Usuario',
+          avatar:   mediaUrl(c.author_avatar ?? c.avatar) ?? null,
           date:     new Date(c.date ?? c.created_at),
         }));
         setComments(parsed);
@@ -71,8 +71,8 @@ export default function IncidentComments({ incidentId }) {
       const newComment = await commentService.add(incidentId, text.trim());
       setComments((prev) => [...prev, {
         ...newComment,
-        username: newComment.author?.username ?? user?.username ?? "yo",
-        avatar:   newComment.author?.avatar   ?? user?.avatar   ?? null,
+        username: newComment.author_username ?? user?.username ?? 'Usuario',
+        avatar:   mediaUrl(newComment.author_avatar ?? user?.avatar) ?? null,
         date:     new Date(newComment.date ?? newComment.created_at ?? Date.now()),
       }]);
       setText("");

@@ -94,14 +94,14 @@ export default function IncidentList() {
   };
 
   // ── Autores únicos para el select ──
-  const authors = [...new Set(incidents.map((i) => i.author?.username).filter(Boolean))];
+  const authors = [...new Set(incidents.map((i) => i.reporter_username).filter(Boolean))];
 
   // ── Filtrado ──
   const filteredIncidents = useMemo(() => {
     return incidents.filter((incident) => {
-      const matchesSearch = 
-        incident.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-        incident.author?.username?.toLowerCase().includes(filters.search.toLowerCase());
+      const matchesSearch =
+        (incident.title ?? '').toLowerCase().includes(filters.search.toLowerCase()) ||
+        (incident.reporter_username ?? '').toLowerCase().includes(filters.search.toLowerCase());
 
       const matchesPriority =
         filters.priorities.length === 0 ||
@@ -109,7 +109,7 @@ export default function IncidentList() {
 
       const matchesStatus =
         filters.statuses.length === 0 ||
-        filters.statuses.includes(incident.status);
+        filters.statuses.includes(incident.status_display ?? incident.status);
 
       const matchesCategory =
         (filters.categories ?? []).length === 0 ||

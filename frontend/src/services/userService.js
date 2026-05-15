@@ -5,7 +5,7 @@ const userService = {
   // Obtener todos los usuarios (solo admins)
   async getAll(params = {}) {
     const { data } = await api.get('/users/', { params });
-    return data;
+    return data.results ?? data;
   },
 
   // Obtener usuario por id

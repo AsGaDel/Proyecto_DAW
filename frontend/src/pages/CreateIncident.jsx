@@ -37,8 +37,11 @@ export default function CreateIncident() {
       setCreatedId(incident.id);
       setSuccess(true);
     } catch (err) {
-      console.error("Error al publicar:", err);
-      const msg = err.response?.data?.detail ?? "Error al publicar el incidente.";
+      console.error("Error al publicar — respuesta del backend:", err.response?.data ?? err.message);
+      const data = err.response?.data;
+      const msg  = data?.detail
+        ?? Object.entries(data ?? {}).map(([k, v]) => `${k}: ${v}`).join(" | ")
+        ?? "Error al publicar el incidente.";
       toast({ message: msg, type: "error" });
     } finally {
       setLoading(false);
