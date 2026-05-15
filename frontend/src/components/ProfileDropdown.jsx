@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { Dropdown, DropdownItem } from "./Dropdown";
-import { useAuth } from "../context/AuthContext";
-import authService from "../services/authService";
+import { useAuth }   from "../context/AuthContext";
+import authService   from "../services/authService";
+import { mediaUrl }  from "../utils/mediaUrl";
 
 export default function ProfileDropdown() {
   const navigate                        = useNavigate();
@@ -16,7 +17,7 @@ export default function ProfileDropdown() {
   // Ajusta los campos según lo que devuelva tu backend en el JWT o en getMe()
   const displayName = user?.full_name ?? user?.fullName ?? user?.username ?? "Usuario";
   const email       = user?.email ?? "";
-  const avatar      = user?.avatar ?? null;
+  const avatar      = mediaUrl(user?.avatar) ?? null;
 
   const trigger = (
     <div className="w-9 h-9 rounded-full flex items-center justify-center overflow-hidden cursor-pointer">

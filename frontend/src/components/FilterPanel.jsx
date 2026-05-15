@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import categoryService from "../services/categoryService";
 
 const priorities = ["Leve", "Moderado", "Crítico"];
-const statuses   = ["Pendiente", "En proceso", "Finalizado"];
+const statuses   = ["Pendiente", "En proceso", "Resuelto"];
 
 const priorityStyles = {
   Leve:     { active: "bg-green-700  text-green-50",  inactive: "bg-white text-gray-500 border border-gray-200" },
@@ -13,7 +13,7 @@ const priorityStyles = {
 const statusStyles = {
   "Pendiente":  { active: "bg-slate-400  text-slate-50",  inactive: "bg-white text-gray-500 border border-gray-200" },
   "En proceso": { active: "bg-orange-400 text-orange-50", inactive: "bg-white text-gray-500 border border-gray-200" },
-  "Finalizado": { active: "bg-teal-400   text-teal-50",   inactive: "bg-white text-gray-500 border border-gray-200" },
+  "Resuelto":   { active: "bg-teal-400   text-teal-50",   inactive: "bg-white text-gray-500 border border-gray-200" },
 };
 
 function Section({ title, children }) {

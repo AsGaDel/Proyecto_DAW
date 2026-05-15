@@ -64,8 +64,8 @@ export default function UserList() {
           ...u,
           fullName: u.full_name ?? u.fullName,
           stats: {
-            reportados: incidentsData.filter((inc) => inc.author?.username === u.username).length,
-            votos:      incidentsData.filter((inc) => inc.author?.username === u.username).reduce((acc, inc) => acc + (inc.votes ?? 0), 0),
+            reportados: incidentsData.filter((inc) => inc.reporter_username === u.username).length,
+            votos:      incidentsData.filter((inc) => inc.reporter_username === u.username).reduce((acc, inc) => acc + (inc.vote_count ?? 0), 0),
             suscritos:  0,
           },
         }));
@@ -106,8 +106,8 @@ export default function UserList() {
   const filtered = useMemo(() => {
     return users.filter((u) => {
       const matchesSearch =
-        u.fullName.toLowerCase().includes(search.toLowerCase()) ||
-        u.username.toLowerCase().includes(search.toLowerCase());
+        (u.fullName ?? '').toLowerCase().includes(search.toLowerCase()) ||
+        (u.username ?? '').toLowerCase().includes(search.toLowerCase());
       const matchesRole = roleFilter === "" || u.role === roleFilter;
       return matchesSearch && matchesRole;
     });

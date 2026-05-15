@@ -9,8 +9,8 @@ from rest_framework.response import Response
 from apps.users.permissions import IsAdmin
 
 from .filters import IncidentFilter
-from .models import Comment, Incident, IncidentPhoto, Subscription, Vote
-from .serializers import CommentSerializer, IncidentPhotoSerializer, IncidentSerializer
+from .models import Category, Comment, Incident, IncidentPhoto, Subscription, Vote
+from .serializers import CategorySerializer, CommentSerializer, IncidentPhotoSerializer, IncidentSerializer
 
 
 class IncidentViewSet(viewsets.ModelViewSet):
@@ -46,22 +46,44 @@ class IncidentViewSet(viewsets.ModelViewSet):
         return [IsAuthenticated()]
 
     def perform_create(self, serializer):
-        # Los trabajadores no reportan incidentes, solo los gestionan
         if self.request.user.role == 'worker':
             raise PermissionDenied('Los trabajadores no pueden crear incidentes.')
-        # El reporter se asigna automáticamente al usuario autenticado
-        serializer.save(reporter=self.request.user)
+        incident = serializer.save(reporter=self.request.user)
+        photo_file = self.request.FILES.get('photo')
+        if photo_file:
+            IncidentPhoto.objects.create(
+                incident=incident,
+                image=photo_file,
+                uploaded_by=self.request.user,
+                photo_type=IncidentPhoto.PhotoType.REPORT,
+            )
 
     def perform_update(self, serializer):
+        from apps.work_orders.models import WorkOrder
+        from apps.notifications.services import notify_incident_status_change
         incident = self.get_object()
         user = self.request.user
-        # Un ciudadano solo puede editar sus propios incidentes
-        if user.role != 'admin' and incident.reporter != user:
+        old_status = incident.status
+
+        if user.role == 'worker':
+            is_assigned = WorkOrder.objects.filter(incident=incident, assigned_worker=user).exists()
+            if not is_assigned:
+                raise PermissionDenied('Solo puedes actualizar incidentes que tienes asignados.')
+            non_status_fields = set(serializer.validated_data.keys()) - {'status'}
+            if non_status_fields:
+                raise PermissionDenied('Los trabajadores solo pueden cambiar el estado del incidente.')
+            updated = serializer.save()
+            if 'status' in serializer.validated_data and updated.status != old_status:
+                notify_incident_status_change(updated, updated.get_status_display())
+            return
+
+        if user.role == 'citizen' and incident.reporter != user:
             raise PermissionDenied('Solo puedes editar tus propios incidentes.')
-        # El cambio de estado es competencia de los trabajadores/admin, no del ciudadano
         if user.role == 'citizen' and 'status' in serializer.validated_data:
             raise PermissionDenied('Los ciudadanos no pueden cambiar el estado de un incidente.')
-        serializer.save()
+        updated = serializer.save()
+        if 'status' in serializer.validated_data and updated.status != old_status:
+            notify_incident_status_change(updated, updated.get_status_display())
 
     def perform_destroy(self, instance):
         # Soft delete: se marca el incidente como eliminado sin borrarlo de la BD.
@@ -72,17 +94,30 @@ class IncidentViewSet(viewsets.ModelViewSet):
 
     # ── Acciones extra ──────────────────────────────────────────
 
-    @action(detail=False, methods=['get'], url_path='my')
-    def my(self, request):
-        """GET /api/incidents/my/ — incidentes del usuario autenticado."""
-        qs = self.get_queryset().filter(reporter=request.user)
-        # Respetar la paginación configurada globalmente en el proyecto
+    def _paginated_response(self, qs):
         page = self.paginate_queryset(qs)
         if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(qs, many=True)
-        return Response(serializer.data)
+            return self.get_paginated_response(self.get_serializer(page, many=True).data)
+        return Response(self.get_serializer(qs, many=True).data)
+
+    @action(detail=False, methods=['get'], url_path='mine')
+    def mine(self, request):
+        """GET /api/incidents/mine/ — incidentes reportados por el usuario autenticado."""
+        return self._paginated_response(self.get_queryset().filter(reporter=request.user))
+
+    @action(detail=False, methods=['get'], url_path='assigned')
+    def assigned(self, request):
+        """GET /api/incidents/assigned/ — incidentes con orden de trabajo asignada al trabajador."""
+        from apps.work_orders.models import WorkOrder
+        ids = WorkOrder.objects.filter(assigned_worker=request.user).values_list('incident_id', flat=True)
+        return self._paginated_response(self.get_queryset().filter(id__in=ids))
+
+    @action(detail=False, methods=['get'], url_path='subscribed')
+    def subscribed(self, request):
+        """GET /api/incidents/subscribed/ — incidentes a los que el usuario está suscrito."""
+        return self._paginated_response(
+            self.get_queryset().filter(subscriptions__user=request.user)
+        )
 
     @action(detail=True, methods=['post'], url_path='vote')
     def vote(self, request, pk=None):
@@ -138,6 +173,22 @@ class IncidentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+class CategoryViewSet(viewsets.ModelViewSet):
+    """
+    GET    /api/categories/      → lista de categorías (todos los autenticados)
+    POST   /api/categories/      → crear (solo admin)
+    PATCH  /api/categories/{id}/ → actualizar nombre (solo admin)
+    DELETE /api/categories/{id}/ → eliminar (solo admin)
+    """
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+
+    def get_permissions(self):
+        if self.action in ('create', 'update', 'partial_update', 'destroy'):
+            return [IsAdmin()]
+        return [IsAuthenticated()]
+
+
 class CommentViewSet(viewsets.ModelViewSet):
     """
     GET/POST   /api/incidents/{incident_pk}/comments/
@@ -155,9 +206,10 @@ class CommentViewSet(viewsets.ModelViewSet):
         ).select_related('author')
 
     def perform_create(self, serializer):
+        from apps.notifications.services import notify_new_comment
         incident = Incident.objects.get(pk=self.kwargs['incident_pk'])
-        # author e incident se inyectan desde la vista, no los envía el cliente
-        serializer.save(author=self.request.user, incident=incident)
+        comment = serializer.save(author=self.request.user, incident=incident)
+        notify_new_comment(comment)
 
     def perform_update(self, serializer):
         comment = self.get_object()

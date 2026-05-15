@@ -5,7 +5,7 @@ const commentService = {
   // Obtener comentarios de un incidente
   async getByIncident(incidentId) {
     const { data } = await api.get(`/incidents/${incidentId}/comments/`);
-    return data;
+    return data.results ?? data;
   },
 
   // Añadir un comentario

@@ -118,7 +118,7 @@ const handleSave = async () => {
         <Field label="Miembro desde">
           <input
             type="text"
-            value={new Intl.DateTimeFormat("es-ES", { dateStyle: "long" }).format(user.createdAt)}
+            value={user.createdAt && !isNaN(user.createdAt) ? new Intl.DateTimeFormat("es-ES", { dateStyle: "long" }).format(user.createdAt) : "—"}
             disabled
             className={baseInput}
           />

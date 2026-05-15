@@ -38,8 +38,7 @@ export default function AssignedList() {
         const data = await incidentService.getAssigned();
         const parsed = data.map((inc) => ({
           ...inc,
-          date:   new Date(inc.date ?? inc.created_at),
-          author: inc.author ?? { username: inc.author_username, avatar: inc.author_avatar ?? null },
+          date: new Date(inc.date ?? inc.created_at),
         }));
         setIncidents(parsed);
       } catch (err) {
@@ -52,20 +51,14 @@ export default function AssignedList() {
     fetchAssigned();
   }, []);
 
-  // ── Handler de cambio de estado ──
-  const handleStatusChange = async (id, newStatus) => {
-    try {
-      await incidentService.updateStatus(id, newStatus);
-      setIncidents((prev) =>
-        prev.map((inc) => inc.id === id ? { ...inc, status: newStatus } : inc)
-      );
-      toast({ message: `Estado actualizado a "${newStatus}".`, type: "success" });
-    } catch (err) {
-      toast({ message: "Error al actualizar el estado.", type: "error" });
-    }
+  // ── Handler de cambio de estado (newStatus es el valor raw) ──
+  const handleStatusChange = (id, newStatus) => {
+    setIncidents((prev) =>
+      prev.map((inc) => inc.id === id ? { ...inc, status: newStatus } : inc)
+    );
   };
 
-  // ── Contadores por estado ──
+  // ── Contadores por estado (raw values) ──
   const counts = incidents.reduce((acc, inc) => {
     acc[inc.status] = (acc[inc.status] ?? 0) + 1;
     return acc;
@@ -83,12 +76,12 @@ export default function AssignedList() {
             <h2 className="font-bold text-gray-500 uppercase text-md m-2">Incidentes asignados</h2>
             <div className="flex gap-2">
               {[
-                { label: "Pendiente",  color: "bg-amber-50 text-amber-600 border-amber-200" },
-                { label: "En proceso", color: "bg-blue-50  text-blue-600  border-blue-200"  },
-                { label: "Finalizado", color: "bg-green-50 text-green-600 border-green-200" },
-              ].map(({ label, color }) => (
-                <span key={label} className={`text-xs font-semibold px-2 py-1 rounded-md border ${color}`}>
-                  {label}: {counts[label] ?? 0}
+                { raw: "pending",     label: "Pendiente",  color: "bg-amber-50 text-amber-600 border-amber-200" },
+                { raw: "in_progress", label: "En proceso", color: "bg-blue-50  text-blue-600  border-blue-200"  },
+                { raw: "resolved",    label: "Resuelto",   color: "bg-green-50 text-green-600 border-green-200" },
+              ].map(({ raw, label, color }) => (
+                <span key={raw} className={`text-xs font-semibold px-2 py-1 rounded-md border ${color}`}>
+                  {label}: {counts[raw] ?? 0}
                 </span>
               ))}
             </div>

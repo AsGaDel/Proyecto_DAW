@@ -14,10 +14,32 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('access_token')
-      window.location.href = '/login'
+    const original = error.config
+
+    // Si el error es 401 y no hemos reintentado ya esta petición
+    if (error.response?.status === 401 && !original._retry) {
+      original._retry = true
+      const refresh = localStorage.getItem('refresh_token')
+
+      if (refresh) {
+        try {
+          // Petición directa con axios (no con api) para evitar bucle en el interceptor
+          const { data } = await axios.post('/api/auth/token/refresh/', { refresh })
+          localStorage.setItem('access_token', data.access)
+          original.headers.Authorization = `Bearer ${data.access}`
+          return api(original)
+        } catch {
+          // El refresh también falló: sesión expirada
+          localStorage.removeItem('access_token')
+          localStorage.removeItem('refresh_token')
+          window.location.href = '/login'
+        }
+      } else {
+        localStorage.removeItem('access_token')
+        window.location.href = '/login'
+      }
     }
+
     return Promise.reject(error)
   }
 )

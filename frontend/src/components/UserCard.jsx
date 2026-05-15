@@ -1,15 +1,17 @@
-import { useState } from "react"; // 1. Importar useState
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import RoleModal from "./RoleModal"; // 2. Importar el nuevo modal
+import RoleModal from "./RoleModal";
 import AssignIncidentModal from "./AssignIncidentModal";
-import { useToast } from "./ToastContainer";
+import { useToast }  from "./ToastContainer";
+import { mediaUrl }  from "../utils/mediaUrl";
 
 export default function UserCard({ user, onDelete, onChangeRole }) {  
   const navigate = useNavigate();
   const toast = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false); // 3. Estado del modal
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const { username, fullName, avatar, stats, role } = user;
+  const { username, fullName, stats, role } = user;
+  const avatar = mediaUrl(user.avatar ?? user.profile?.avatar);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
 
   const roleStyles = {

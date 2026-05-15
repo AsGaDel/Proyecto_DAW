@@ -1,6 +1,12 @@
 from django.contrib import admin
 
-from .models import Comment, Incident, IncidentPhoto, Subscription, Vote
+from .models import Category, Comment, Incident, IncidentPhoto, Subscription, Vote
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'created_at']
+    search_fields = ['name']
 
 
 @admin.register(Incident)

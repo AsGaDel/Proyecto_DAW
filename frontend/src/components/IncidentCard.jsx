@@ -123,7 +123,7 @@ export default function IncidentCard({ id, name, photo, priority, status, catego
             ? <span className="text-slate-500 inline-block text-xs  mb-2 ml-1">{status}</span>
             : status === "En proceso"
             ? <span className="text-orange-500 inline-block text-xs  mb-2 ml-1">{status}</span>
-            : status === "Finalizado"
+            : status === "Resuelto"
             ? <span className="text-teal-500 inline-block text-xs mb-2 ml-1">{status}</span>
             : <span className="text-black inline-block text-xs  mb-2 ml-1">{status}</span>
           }

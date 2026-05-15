@@ -5,7 +5,7 @@ const categoryService = {
   // Obtener todas las categorías
   async getAll() {
     const { data } = await api.get('/categories/');
-    return data;
+    return data.results ?? data;
   },
 
   // Crear una categoría (solo admins)

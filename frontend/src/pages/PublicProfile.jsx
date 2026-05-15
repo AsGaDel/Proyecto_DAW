@@ -10,6 +10,7 @@ import ProfileIncidents from "../components/ProfileIncidents";
 
 import userService     from "../services/userService";
 import incidentService from "../services/incidentService";
+import { mediaUrl }    from "../utils/mediaUrl";
 
 // ─── Iconos para estadísticas ─────────────────────────────────────────────────
 
@@ -50,7 +51,7 @@ export default function PublicProfile() {
         setLoading(true);
         const [userData, incidentsData] = await Promise.all([
           userService.getByUsername(username),
-          incidentService.getAll({ author: username }),
+          incidentService.getAll({ reporter: username }),
         ]);
 
         setUser(userData);
@@ -62,7 +63,7 @@ export default function PublicProfile() {
 
         setStatsData([
           { label: "Reportados",      value: incidentsData.length, icon: statIcons.reportados },
-          { label: "Votos recibidos", value: incidentsData.reduce((acc, inc) => acc + (inc.votes ?? 0), 0), icon: statIcons.votos },
+          { label: "Votos recibidos", value: incidentsData.reduce((acc, inc) => acc + (inc.vote_count ?? 0), 0), icon: statIcons.votos },
         ]);
       } catch (err) {
         setError("Usuario no encontrado.");
@@ -112,7 +113,7 @@ export default function PublicProfile() {
           {/* Avatar — solo lectura */}
           <div className="w-24 h-24 rounded-full shrink-0 overflow-hidden">
             {user.avatar
-              ? <img src={user.avatar} alt={user.username} className="w-full h-full object-cover" />
+              ? <img src={mediaUrl(user.avatar) ?? user.avatar} alt={user.username} className="w-full h-full object-cover" />
               : (
                 <div className="w-full h-full bg-blue-600 flex items-center justify-center text-white text-3xl font-bold">
                   {user.username.charAt(0).toUpperCase()}

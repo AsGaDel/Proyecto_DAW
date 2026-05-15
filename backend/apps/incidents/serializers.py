@@ -1,6 +1,13 @@
 from rest_framework import serializers
 
-from .models import Comment, Incident, IncidentPhoto, Subscription, Vote
+from .models import Category, Comment, Incident, IncidentPhoto, Subscription, Vote
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = Category
+        fields = ['id', 'name', 'created_at']
+        read_only_fields = ['id', 'created_at']
 
 
 class IncidentPhotoSerializer(serializers.ModelSerializer):
@@ -11,31 +18,31 @@ class IncidentPhotoSerializer(serializers.ModelSerializer):
 
 
 class IncidentSerializer(serializers.ModelSerializer):
-    photos           = IncidentPhotoSerializer(many=True, read_only=True)
-    reporter_email   = serializers.EmailField(source='reporter.email', read_only=True)
+    photos            = IncidentPhotoSerializer(many=True, read_only=True)
+    reporter_email    = serializers.EmailField(source='reporter.email', read_only=True)
     reporter_username = serializers.CharField(source='reporter.username', read_only=True)
-    # Campos calculados que dependen del usuario que hace la petición;
-    # se computan mediante SerializerMethodField para poder acceder al request.
+    status_display    = serializers.CharField(source='get_status_display', read_only=True)
     is_voted      = serializers.SerializerMethodField()
     is_subscribed = serializers.SerializerMethodField()
-    # Objeto location anidado para compatibilidad con el frontend (location.address, location.latlng)
     location      = serializers.SerializerMethodField()
+    work_order    = serializers.SerializerMethodField()
 
     class Meta:
         model  = Incident
         fields = [
             'id', 'title', 'description',
             'reporter', 'reporter_email', 'reporter_username',
-            'status', 'priority', 'category',
+            'status', 'status_display', 'priority', 'category',
             'latitude', 'longitude', 'address', 'location',
             'vote_count', 'is_voted', 'is_subscribed',
             'created_at', 'updated_at',
             'deleted_at', 'deleted_reason', 'admin_notes',
-            'photos',
+            'photos', 'work_order',
         ]
         read_only_fields = [
             'reporter', 'reporter_email', 'reporter_username',
-            'vote_count', 'created_at', 'updated_at', 'deleted_at', 'location',
+            'vote_count', 'created_at', 'updated_at', 'deleted_at',
+            'location', 'status_display', 'work_order',
         ]
 
     def get_location(self, obj):
@@ -57,6 +64,21 @@ class IncidentSerializer(serializers.ModelSerializer):
             return obj.subscriptions.filter(user=request.user).exists()
         return False
 
+    def get_work_order(self, obj):
+        try:
+            wo = obj.work_order
+            return {
+                'id':                      wo.pk,
+                'status':                  wo.status,
+                'status_display':          wo.get_status_display(),
+                'priority':                wo.priority,
+                'assigned_worker_id':      wo.assigned_worker_id,
+                'assigned_worker_username': wo.assigned_worker.username,
+                'admin_instructions':      wo.admin_instructions,
+            }
+        except Exception:
+            return None
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         request = self.context.get('request')
@@ -71,18 +93,18 @@ class IncidentSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author_email = serializers.EmailField(source='author.email', read_only=True)
-    author_name  = serializers.CharField(source='author.full_name', read_only=True)
+    author_email    = serializers.EmailField(source='author.email', read_only=True)
+    author_name     = serializers.CharField(source='author.full_name', read_only=True)
+    author_username = serializers.CharField(source='author.username', read_only=True)
 
     class Meta:
         model  = Comment
         fields = [
-            'id', 'incident', 'author', 'author_email', 'author_name',
+            'id', 'incident', 'author', 'author_email', 'author_name', 'author_username',
             'text', 'created_at', 'updated_at', 'is_deleted',
         ]
-        # author e incident los asigna la vista, no el cliente
         read_only_fields = [
-            'author', 'author_email', 'author_name',
+            'author', 'author_email', 'author_name', 'author_username',
             'incident', 'created_at', 'updated_at', 'is_deleted',
         ]
 

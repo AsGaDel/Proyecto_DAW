@@ -1,10 +1,11 @@
 from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
-from .views import CommentViewSet, IncidentViewSet
+from .views import CategoryViewSet, CommentViewSet, IncidentViewSet
 
 router = SimpleRouter()
-router.register('incidents', IncidentViewSet, basename='incidents')
+router.register('incidents',  IncidentViewSet,  basename='incidents')
+router.register('categories', CategoryViewSet,  basename='categories')
 
 # Router anidado para comentarios: /incidents/{incident_pk}/comments/
 comment_router = SimpleRouter()

@@ -41,17 +41,16 @@ export default function Dashboard() {
 
         const parsed = incidentsData
           .map((inc) => ({ ...inc, date: new Date(inc.date ?? inc.created_at ?? Date.now()) }))
-          .filter((inc) => inc.status !== "Finalizado")
-          .sort((a, b) => (b.votes ?? 0) - (a.votes ?? 0))
+          .filter((inc) => inc.status !== "resolved")
+          .sort((a, b) => (b.vote_count ?? 0) - (a.vote_count ?? 0))
           .slice(0, 12);
 
         setIncidents(parsed);
 
-        const now = new Date();
         setStatsValues([
-          { id: 1, label: "Incidentes activos",     value: incidentsData.filter((i) => i.status !== "Finalizado").length, onClick: () => navigate("/incident-list", { state: { statuses: ["Pendiente", "En proceso"] } })},
-          { id: 2, label: "Incidentes pendientes",  value: incidentsData.filter((i) => i.status === "Pendiente").length,  onClick: () => navigate("/incident-list", { state: { statuses: ["Pendiente"] } })},
-          { id: 3, label: "Incidentes resueltos",   value: incidentsData.filter((i) => i.status === "Finalizado").length, onClick: () => navigate("/incident-list", { state: { statuses: ["Finalizado"] } })},
+          { id: 1, label: "Incidentes activos",    value: incidentsData.filter((i) => i.status !== "resolved").length,    onClick: () => navigate("/incident-list", { state: { statuses: ["Pendiente", "En proceso"] } }) },
+          { id: 2, label: "Incidentes pendientes", value: incidentsData.filter((i) => i.status === "pending").length,     onClick: () => navigate("/incident-list", { state: { statuses: ["Pendiente"] } }) },
+          { id: 3, label: "Incidentes resueltos",  value: incidentsData.filter((i) => i.status === "resolved").length,    onClick: () => navigate("/incident-list", { state: { statuses: ["Resuelto"] } }) },
         ]);
       } catch (err) {
         setError("No se pudieron cargar los datos.");

@@ -4,11 +4,16 @@ from django.conf import settings
 from django.conf.urls.static import static
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
+from apps.incidents.stats_views import global_stats, user_stats
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Documentación
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/',            SpectacularAPIView.as_view(),                      name='schema'),
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    # Stats
+    path('api/stats/',                    global_stats, name='global-stats'),
+    path('api/stats/user/<str:username>/', user_stats,   name='user-stats'),
     # Apps
     path('api/', include('apps.users.urls')),
     path('api/', include('apps.incidents.urls')),

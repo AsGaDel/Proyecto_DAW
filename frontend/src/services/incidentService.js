@@ -5,7 +5,7 @@ const incidentService = {
   // Obtener todos los incidentes (con filtros opcionales)
   async getAll(params = {}) {
     const { data } = await api.get('/incidents/', { params });
-    return data;
+    return data.results ?? data;
   },
 
   // Obtener un incidente por id
@@ -22,8 +22,8 @@ const incidentService = {
     form.append('category',    formData.category);
     form.append('priority',    formData.priority);
     if (formData.location) {
-      form.append('latitude',  formData.location.latlng.lat);
-      form.append('longitude', formData.location.latlng.lng);
+      form.append('latitude',  parseFloat(formData.location.latlng.lat.toFixed(6)));
+      form.append('longitude', parseFloat(formData.location.latlng.lng.toFixed(6)));
       form.append('address',   formData.location.address);
     }
     if (formData.photo) {
@@ -55,19 +55,19 @@ const incidentService = {
   // Obtener incidentes del usuario autenticado
   async getMine() {
     const { data } = await api.get('/incidents/mine/');
-    return data;
+    return data.results ?? data;
   },
 
   // Obtener incidentes asignados al trabajador autenticado
   async getAssigned() {
     const { data } = await api.get('/incidents/assigned/');
-    return data;
+    return data.results ?? data;
   },
 
   // Obtener incidentes suscritos por el usuario autenticado
   async getSubscribed() {
     const { data } = await api.get('/incidents/subscribed/');
-    return data;
+    return data.results ?? data;
   },
 
   // Votar / quitar voto

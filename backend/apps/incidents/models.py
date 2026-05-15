@@ -2,6 +2,20 @@ from django.conf import settings
 from django.db import models
 
 
+class Category(models.Model):
+    """Categorías de incidentes gestionadas dinámicamente por los admins."""
+    name       = models.CharField(max_length=60, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name        = 'Categoría'
+        verbose_name_plural = 'Categorías'
+        ordering            = ['name']
+
+    def __str__(self):
+        return self.name
+
+
 class Incident(models.Model):
     class Status(models.TextChoices):
         PENDING     = 'pending',     'Pendiente'
@@ -14,12 +28,6 @@ class Incident(models.Model):
         MEDIUM = 'Moderado', 'Moderado'
         HIGH   = 'Crítico',  'Crítico'
 
-    class Category(models.TextChoices):
-        CONNECTIVITY  = 'Red / Conectividad',   'Red / Conectividad'
-        ELECTRICITY   = 'Suministro eléctrico', 'Suministro eléctrico'
-        INFRASTRUCTURE = 'Infraestructura',     'Infraestructura'
-        OTHER         = 'Otro',                 'Otro'
-
     title       = models.CharField(max_length=200)
     description = models.TextField()
     reporter    = models.ForeignKey(
@@ -29,7 +37,8 @@ class Incident(models.Model):
     )
     status    = models.CharField(max_length=15, choices=Status.choices, default=Status.PENDING)
     priority  = models.CharField(max_length=20, choices=Priority.choices, default=Priority.LOW)
-    category  = models.CharField(max_length=25, choices=Category.choices, default=Category.OTHER)
+    # Nombre de categoría como string libre — la lista maestra vive en el modelo Category
+    category  = models.CharField(max_length=60, blank=True)
     latitude  = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     address   = models.CharField(max_length=255, blank=True)
