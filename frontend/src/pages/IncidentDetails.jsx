@@ -50,7 +50,7 @@ export default function IncidentDetails() {
 
   if (loading) return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <Navbar appName="ARIT" />
+      <Navbar appName="ARIT" showNavLinks />
       <div className="flex-1 flex items-center justify-center">
         <p className="text-sm text-gray-400">Cargando incidente...</p>
       </div>
@@ -60,7 +60,7 @@ export default function IncidentDetails() {
 
   if (error || !incident) return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <Navbar appName="ARIT" />
+      <Navbar appName="ARIT" showNavLinks />
       <div className="flex-1 flex flex-col items-center justify-center gap-3">
         <p className="text-sm text-gray-500">{error ?? "Incidente no encontrado."}</p>
         <button
@@ -76,7 +76,7 @@ export default function IncidentDetails() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <Navbar appName="ARIT" />
+      <Navbar appName="ARIT" showNavLinks />
 
       <main className="flex-1 w-full mx-auto px-4 md:px-16 lg:px-28 xl:px-40 py-8">
 

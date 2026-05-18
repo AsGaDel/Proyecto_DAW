@@ -77,7 +77,7 @@ export default function PublicProfile() {
 
   if (loading) return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <Navbar appName="ARIT" />
+      <Navbar appName="ARIT" showNavLinks />
       <div className="flex-1 flex items-center justify-center">
         <p className="text-sm text-gray-400">Cargando perfil...</p>
       </div>
@@ -87,7 +87,7 @@ export default function PublicProfile() {
 
   if (error || !user) return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <Navbar appName="ARIT" />
+      <Navbar appName="ARIT" showNavLinks />
       <div className="flex-1 flex flex-col items-center justify-center gap-3">
         <p className="text-sm text-gray-500">{error ?? "Usuario no encontrado."}</p>
         <button
@@ -103,7 +103,7 @@ export default function PublicProfile() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <Navbar appName="ARIT" />
+      <Navbar appName="ARIT" showNavLinks />
 
       <main className="flex-1 max-w-4xl lg:max-w-[80%] xl:max-w-[70%] 2xl:max-w-[60%] w-full mx-auto px-4 sm:px-8 py-8 flex flex-col gap-6">
 

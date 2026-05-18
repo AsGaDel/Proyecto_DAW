@@ -120,7 +120,7 @@ export default function NotificationList() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      <Navbar appName="ARIT" />
+      <Navbar appName="ARIT" showNavLinks />
 
       <main className="flex-1 max-w-2xl w-full mx-auto px-4 sm:px-8 py-8">
 
